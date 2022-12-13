@@ -16,7 +16,7 @@ class MeshArray {
         MeshArray() = default;
         MeshArray(int Nx, int Ny, int Nz);
         inline double operator() (int i, int j, int k);
-        inline void print_XtoY();
+        inline void print_projection();
 
 };
 
@@ -24,7 +24,7 @@ inline double MeshArray::operator()(int i, int j, int k){
     return MeshArray::array[i + Nx*j + Nx*Ny*k];
 };
 
-inline void MeshArray::print_XtoY(){
+inline void MeshArray::print_projection(){
     int length;
     if (this->Nx >= 10){
         length = 10;
@@ -46,12 +46,12 @@ MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::Nx = Nx;
     MeshArray::Ny = Ny;
     MeshArray::Nz = Nz;
+    std::cout << "INFO:\tSize of mesh: " << Nx << "x" << Ny << "x" << Nz << std::endl;
 
     for (int i = 0; i < Nx; ++i) {
         for (int j = 0; j < Ny; ++j) {
             for (int k = 0; k < Nz; ++k) {
                 MeshArray::array.push_back(0.);
-                // std::cout << "|" << std::endl;
             }
         }
     }
