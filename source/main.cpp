@@ -13,6 +13,9 @@ int main(int argc, char** argv) {
         std::cout << "WARNING:\tMesh doesn't get size params. Initialise mesh with size = 0x0x0" << std::endl;
     }
     MeshArray mesh(Nx, Ny, Nz);
-    mesh.print_projection();
+    std::cout << "Start" << std::endl;
+    MeshArray real_mesh = mesh.real_solution();
+    
+    real_mesh.print_projection();
     return 0;
 }
