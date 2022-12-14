@@ -4,6 +4,10 @@
 #include <cmath>
 #include <fstream>
 
+double dx = 0.25;
+double dy = 0.15;
+double dz = 0.1;
+
 
 class MeshArray {
     private:
@@ -27,19 +31,29 @@ inline double MeshArray::operator()(int i, int j, int k){
 };
 
 inline void MeshArray::print_projection(){
-    int length;
-    if (this->Nx >= 10){
-        length = 10;
-    }
-    else {
-        length = this->Nx;
-    }
-
-    for (int i = 0; i < length; ++i) {
-        for (int j = 0; j < length; ++j) {
-            std::cout << std::setw(5) << MeshArray::operator()(i, j, 0) << " ";
+    if ((MeshArray::Nx != 0) and (MeshArray::Ny != 0) and (MeshArray::Nz != 0))
+    {
+        int lengthX, lengthY;
+        if (this->Nx >= 10){
+            lengthX = 10;
         }
-        std::cout << std::endl;
+        else {
+            lengthX = this->Nx+1;
+        }
+        
+        if (this->Ny >= 10){
+            lengthY = 10;
+        }
+        else {
+            lengthY = this->Ny+1;
+        }
+
+        for (int i = 0; i < lengthY; ++i) {
+            for (int j = 0; j < lengthX; ++j) {
+                std::cout << std::setw(5) << MeshArray::operator()(i, j, 0) << " ";
+            }
+            std::cout << std::endl;
+        }
     }
 };
 
@@ -50,9 +64,9 @@ MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::Nz = Nz;
     std::cout << "INFO:\tSize of mesh: " << Nx << "x" << Ny << "x" << Nz << std::endl;
 
-    for (double z = 0; z <= 1; z += 1./Nz) {
-        for (double y = 0; y <= 1; y += 1./Ny) {
-            for (double x = 0; x <= 1; x += 1./Nx) {
+    for (double z = 0; z <= 1.; z += 1./Nz) {
+        for (double y = 0; y <= 1.; y += 1./Ny) {
+            for (double x = 0; x <= 1.; x += 1./Nx) {
                 MeshArray::array.push_back(0.);
             }
         }
@@ -63,19 +77,13 @@ MeshArray::MeshArray(int Nx, int Ny, int Nz){
 };
 
 double real_function(double x, double y, double z, double t = 1){
-    double dx = 0.25;
-    double dy = 0.15;
-    double dz = 0.1;
-
     return std::sin(M_PI*x) * std::sin(M_PI*y) * std::sin(M_PI*z) *
         (1 - std::exp(-(dx+dy+dz)*M_PI_2*t));
 
 };
 
-
 inline MeshArray MeshArray::real_solution(){
     Nx, Ny, Nz = MeshArray::Nx, MeshArray::Ny, MeshArray::Nz;
-    std::cout << Nx << " " << Ny << " " << Nz << std::endl;
     MeshArray realmesh;
     realmesh.Nx = Nx;
     realmesh.Ny = Ny;
@@ -89,15 +97,19 @@ inline MeshArray MeshArray::real_solution(){
             for (double x = 0; x <= 1; x += 1./Nx) {
                 double value = real_function(x, y, z);
                 realmesh.array.push_back(value);
-                file << std::to_string(value) + " ";
+                file << std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " " + std::to_string(value) + "\n";
             }
         }
     }
     
     file.close();
+
     realmesh.capacity = realmesh.array.capacity();
     realmesh.size = realmesh.array.size();
+
+    /* Run py-script to create mesh */
     std::string command = "python3 ../source/mesh/drawing.py ";
+    std::cout << "INFO:\tRun python script." << std::endl;
     command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz);
     std::system(command.c_str());
     return realmesh;
