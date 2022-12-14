@@ -23,7 +23,7 @@ class MeshArray {
         MeshArray(int Nx, int Ny, int Nz);
         inline double operator() (int i, int j, int k);
         inline void print_projection();
-        inline MeshArray real_solution();
+        inline MeshArray real_solution(bool draw);
 };
 
 inline double MeshArray::operator()(int i, int j, int k){
@@ -62,7 +62,7 @@ MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::Nx = Nx;
     MeshArray::Ny = Ny;
     MeshArray::Nz = Nz;
-    std::cout << "INFO:\tSize of mesh: " << Nx << "x" << Ny << "x" << Nz << std::endl;
+    std::cout << "INFO:\tSize of mesh: " << Nx << "x" << Ny << "x" << Nz << "." << std::endl;
 
     for (double z = 0; z <= 1.; z += 1./Nz) {
         for (double y = 0; y <= 1.; y += 1./Ny) {
@@ -82,7 +82,7 @@ double real_function(double x, double y, double z, double t = 1){
 
 };
 
-inline MeshArray MeshArray::real_solution(){
+inline MeshArray MeshArray::real_solution(bool draw){
     Nx, Ny, Nz = MeshArray::Nx, MeshArray::Ny, MeshArray::Nz;
     MeshArray realmesh;
     realmesh.Nx = Nx;
@@ -97,7 +97,9 @@ inline MeshArray MeshArray::real_solution(){
             for (double x = 0; x <= 1; x += 1./Nx) {
                 double value = real_function(x, y, z);
                 realmesh.array.push_back(value);
-                file << std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " " + std::to_string(value) + "\n";
+                if (draw) {
+                    file << std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " " + std::to_string(value) + "\n";
+                }
             }
         }
     }
@@ -108,9 +110,14 @@ inline MeshArray MeshArray::real_solution(){
     realmesh.size = realmesh.array.size();
 
     /* Run py-script to create mesh */
-    std::string command = "python3 ../source/mesh/drawing.py ";
-    std::cout << "INFO:\tRun python script." << std::endl;
-    command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz);
-    std::system(command.c_str());
+    if (draw) {
+        std::string command = "python3 ../source/mesh/drawing.py ";
+        std::cout << "INFO:\tRun python script." << std::endl;
+        command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz);
+        std::system(command.c_str());
+    }
+
+    std::string commandDelete = "rm ../data/files/analytic_mesh.txt";
+    std::system(commandDelete.c_str());
     return realmesh;
 };
