@@ -3,24 +3,26 @@ import numpy as np
 from pyevtk.hl import pointsToVTK
 
 
-def numpyToVTK(xs, ys, zs, values):
+def numpyToVTK(xs: list, ys: list, zs: list, values: list, filename: str) -> None:
     xs = np.array(xs)
     ys = np.array(ys)
     zs = np.array(zs)
     values = np.array(values)
+    output = filename.split('/')[-1].split('.')[-2]
 
     pointsToVTK(
-        "../data/files/analytic_mesh", 
+        f"../data/files/{output}", 
         xs, ys, zs, 
-        data = {'U': values}
+        data = {'U_analytical': values}
     )
 
 def main():
     Nx = int(sys.argv[1]) + 1
     Ny = int(sys.argv[2]) + 1
     Nz = int(sys.argv[3]) + 1
+    filename = sys.argv[4]
     xs, ys, zs, values = [], [], [], []
-    with open(r"../data/files/analytic_mesh.txt", 'r') as file:
+    with open(filename, 'r') as file:
         for line in file.readlines():
             x, y, z, value = [float(i) for i in line.split()]
             xs.append(x)
@@ -28,7 +30,7 @@ def main():
             zs.append(z)
             values.append(value)
 
-    numpyToVTK(xs, ys, zs, values)
+    numpyToVTK(xs, ys, zs, values, filename)
         
 
 if __name__ == "__main__":

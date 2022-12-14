@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
         return -1;
     }
     MeshArray mesh(Nx, Ny, Nz);
-    MeshArray real_mesh = mesh.real_solution(false);
+    MeshArray real_mesh = mesh.real_solution(true);
 
     return 0;
 }
