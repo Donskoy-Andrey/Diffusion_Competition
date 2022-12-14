@@ -5,6 +5,7 @@ int main(int argc, char** argv) {
     int Nx = 0;
     int Ny = 0;
     int Nz = 0;
+
     if (argc == 4) {
         Nx = std::stoi(argv[1]);
         Ny = std::stoi(argv[2]);

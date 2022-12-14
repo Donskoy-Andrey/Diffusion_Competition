@@ -1,13 +1,10 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <iomanip>
 #include <cmath>
 #include <fstream>
-
-double dx = 0.25;
-double dy = 0.15;
-double dz = 0.1;
-
 
 class MeshArray {
     private:
@@ -24,6 +21,9 @@ class MeshArray {
         inline double operator() (int i, int j, int k);
         inline void print_projection();
         inline MeshArray real_solution(bool draw);
+        const inline int get_Nx();
+        const inline int get_Ny();
+        const inline int get_Nz();
 };
 
 inline double MeshArray::operator()(int i, int j, int k){
@@ -57,6 +57,17 @@ inline void MeshArray::print_projection(){
     }
 };
 
+const inline int MeshArray::get_Nx(){
+    return this->Nx;
+};
+
+const inline int MeshArray::get_Ny(){
+    return this->Ny;
+};
+
+const inline int MeshArray::get_Nz(){
+    return this->Nz;
+};
 
 MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::Nx = Nx;
@@ -77,6 +88,9 @@ MeshArray::MeshArray(int Nx, int Ny, int Nz){
 };
 
 double real_function(double x, double y, double z, double t = 1){
+    double dx = 0.25;
+    double dy = 0.15;
+    double dz = 0.1;
     return std::sin(M_PI*x) * std::sin(M_PI*y) * std::sin(M_PI*z) *
         (1 - std::exp(-(dx+dy+dz)*M_PI_2*t));
 
