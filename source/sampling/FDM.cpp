@@ -28,10 +28,8 @@ double delta_t(int Nx, int Ny, int Nz)
     return delta_t;
 }
 
-double razn_sh(MeshArray & mesh)
+double diff(MeshArray & mesh, int i, int j, int k)
 {
-    int i,j,k;
-
     int Nx = mesh.get_Nx();
     int Ny = mesh.get_Ny();
     int Nz = mesh.get_Nz();
@@ -40,15 +38,9 @@ double razn_sh(MeshArray & mesh)
     double delta_y = delta(Nx, Ny, Nz, "y");
     double delta_z = delta(Nx, Ny, Nz, "z");
 
-    double array[i + Nx*j + Nx*Ny*k]; // U_ijk
-
-    // Lx = Lx_ijk
-    double LxU = (array[i-1 + Nx*j + Nx*Ny*k] - 2 * array[i + Nx*j + Nx*Ny*k] + array[i + 1 + Nx*j + Nx*Ny*k]) 
-        / pow(delta_x, 2);
-    double LyU = (array[i + Nx*(j-1) + Nx*Ny*k] - 2 * array[i + Nx*j + Nx*Ny*k] + array[i + Nx*(j+1) + Nx*Ny*k]) 
-        / pow(delta_y, 2);
-    double LzU = (array[i+ Nx*j + Nx*Ny*(k-1)] - 2 * array[i + Nx*j + Nx*Ny*k] + array[i + Nx*j + Nx*Ny*(k+1)]) 
-        / pow(delta_z, 2);
+    double LxU = (mesh(i-1, j, k) - 2 * mesh(i, j, k) + mesh(i + 1, j, k)) / pow(delta_x, 2);
+    double LyU = (mesh(i, j - 1, k) - 2 * mesh(i, j, k) + mesh(i, j + 1, k)) / pow(delta_y, 2);
+    double LzU = (mesh(i, j, k + 1) - 2 * mesh(i, j, k) + mesh(i, j, k + 1)) / pow(delta_z, 2);
 
     return 0;
 }

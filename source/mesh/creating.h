@@ -98,7 +98,7 @@ inline double real_function(double x, double y, double z, double t = 1){
     double dy = 0.15;
     double dz = 0.1;
     return std::sin(M_PI*x) * std::sin(M_PI*y) * std::sin(M_PI*z) *
-        (1 - std::exp(-(dx+dy+dz)*M_PI_2*t));
+        (1 - std::exp(-(dx+dy+dz)*M_PI*M_PI*t));
 
 };
 
