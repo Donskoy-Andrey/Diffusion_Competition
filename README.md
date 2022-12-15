@@ -1,7 +1,7 @@
-# Конкурсное задание по суперкомпьютерной практике
+# Competitive task on supercomputer practice
 
-## Формулировка задачи диффузии
-Рассматривается решение нестационарного уравнения диффузии с неизвестной U.
+## Formulation of the diffusion problem
+The solution of the non-stationary diffusion equation with unknown U is considered.
 
 ## Start code
 
@@ -14,7 +14,7 @@ make
 ./main 5 5 5
 ```
 
-## Аналитическое решение
+## Analytical solution
 <p align="center">
   <img src="data/images/analytical.png">
 </p>
