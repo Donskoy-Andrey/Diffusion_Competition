@@ -25,6 +25,7 @@ class MeshArray {
         const inline int get_Nx();
         const inline int get_Ny();
         const inline int get_Nz();
+        const inline std::vector <double> get_array();
 };
 
 inline double MeshArray::operator()(int i, int j, int k){
@@ -70,6 +71,10 @@ const inline int MeshArray::get_Nz(){
     return this->Nz;
 };
 
+const inline std::vector <double> MeshArray::get_array(){
+    return this->array;
+};
+
 inline MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::Nx = Nx;
     MeshArray::Ny = Ny;
@@ -108,7 +113,7 @@ inline void data_to_vtu(std::string filename, int Nx, int Ny, int Nz){
 inline MeshArray MeshArray::real_solution(bool draw){
     Nx = this->Nx, Ny = this->Ny, Nz = this->Nz;
     std::cout << "INFO:\tCreate real mesh with size: " << Nx << "x" << Ny << "x" << Nz << "." <<  std::endl;
-
+    this->array.clear();
     std::ofstream file;
     std::string filename = "../data/files/analytical_mesh.txt";
     file.open(filename);

@@ -28,5 +28,14 @@ int main(int argc, char** argv) {
     MeshArray mesh(Nx, Ny, Nz);
     MeshArray real_mesh = mesh.real_solution(true);
 
+    /*
+    Examples to get params of mesh.
+    std::cout << real_mesh.get_Nx() << std::endl;
+    std::cout << real_mesh.get_Ny() << std::endl;
+    std::cout << real_mesh.get_Nz() << std::endl;
+    std::cout << real_mesh.get_array().size() << std::endl;
+    std::cout << real_mesh(3,3,3) << std::endl;;
+    */
+
     return 0;
 }
