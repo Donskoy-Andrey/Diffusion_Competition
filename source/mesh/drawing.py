@@ -15,12 +15,12 @@ def numpyToVTK(xs: list, ys: list, zs: list, values: list, filename: str) -> Non
         xs, ys, zs, 
         data = {'U_analytical': values}
     )
-    print("INFO:\tImage saved.")
+    print(f"INFO:\tImage saved ({values.shape[0]} points).")
 
 def main():
-    Nx = int(sys.argv[1]) + 1
-    Ny = int(sys.argv[2]) + 1
-    Nz = int(sys.argv[3]) + 1
+    Nx = int(sys.argv[1])
+    Ny = int(sys.argv[2])
+    Nz = int(sys.argv[3])
     filename = sys.argv[4]
     xs, ys, zs, values = [], [], [], []
     with open(filename, 'r') as file:

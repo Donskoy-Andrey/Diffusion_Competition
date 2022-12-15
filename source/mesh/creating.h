@@ -76,9 +76,9 @@ inline MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::Nz = Nz;
     std::cout << "INFO:\tSize of mesh: " << Nx << "x" << Ny << "x" << Nz << "." << std::endl;
 
-    for (double z = 0; z <= 1.; z += 1./Nz) {
-        for (double y = 0; y <= 1.; y += 1./Ny) {
-            for (double x = 0; x <= 1.; x += 1./Nx) {
+    for (double z = 0; z <= 1; z += 1./(Nz-1)) {
+        for (double y = 0; y <= 1; y += 1./(Ny-1)) {
+            for (double x = 0; x <= 1; x += 1./(Nx-1)) {
                 MeshArray::array.push_back(0.);
             }
         }
@@ -113,9 +113,9 @@ inline MeshArray MeshArray::real_solution(bool draw){
     std::string filename = "../data/files/analytical_mesh.txt";
     file.open(filename);
 
-    for (double z = 0; z <= 1; z += 1./Nz) {
-        for (double y = 0; y <= 1; y += 1./Ny) {
-            for (double x = 0; x <= 1; x += 1./Nx) {
+    for (double z = 0; z <= 1; z += 1./(Nz-1)) {
+        for (double y = 0; y <= 1; y += 1./(Ny-1)) {
+            for (double x = 0; x <= 1; x += 1./(Nx-1)) {
                 double value = real_function(x, y, z);
                 this->array.push_back(value);
                 if (draw) {
