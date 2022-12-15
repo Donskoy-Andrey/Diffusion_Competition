@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
         std::cout << "WARNING:\tMesh doesn't get enough size params. Initialise mesh with size = 0x0x0." << std::endl;
         return -1;
     }
+
     MeshArray mesh(Nx, Ny, Nz);
     MeshArray real_mesh = mesh.real_solution(true);
 

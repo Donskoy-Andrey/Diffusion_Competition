@@ -15,6 +15,7 @@ def numpyToVTK(xs: list, ys: list, zs: list, values: list, filename: str) -> Non
         xs, ys, zs, 
         data = {'U_analytical': values}
     )
+    print("INFO:\tImage saved.")
 
 def main():
     Nx = int(sys.argv[1]) + 1

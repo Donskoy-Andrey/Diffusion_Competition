@@ -17,7 +17,8 @@ class MeshArray {
 
     public:
         MeshArray() = default;
-        MeshArray(int Nx, int Ny, int Nz);
+        ~MeshArray() = default;
+        inline MeshArray(int Nx, int Ny, int Nz);
         inline double operator() (int i, int j, int k);
         inline void print_projection();
         inline MeshArray real_solution(bool draw);
@@ -69,7 +70,7 @@ const inline int MeshArray::get_Nz(){
     return this->Nz;
 };
 
-MeshArray::MeshArray(int Nx, int Ny, int Nz){
+inline MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::Nx = Nx;
     MeshArray::Ny = Ny;
     MeshArray::Nz = Nz;
@@ -87,7 +88,7 @@ MeshArray::MeshArray(int Nx, int Ny, int Nz){
     MeshArray::size = MeshArray::array.size();
 };
 
-double real_function(double x, double y, double z, double t = 1){
+inline double real_function(double x, double y, double z, double t = 1){
     double dx = 0.25;
     double dy = 0.15;
     double dz = 0.1;
@@ -96,19 +97,17 @@ double real_function(double x, double y, double z, double t = 1){
 
 };
 
-void data_to_vtu(std::string filename, int Nx, int Ny, int Nz){
+inline void data_to_vtu(std::string filename, int Nx, int Ny, int Nz){
     std::string command = "python3 ../source/mesh/drawing.py ";
     std::cout << "INFO:\tRun python script." << std::endl;
     command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz) + " " + filename;
+    std::cout << "\t" << command << std::endl;
     std::system(command.c_str());
 }
 
 inline MeshArray MeshArray::real_solution(bool draw){
-    Nx, Ny, Nz = MeshArray::Nx, MeshArray::Ny, MeshArray::Nz;
-    MeshArray realmesh;
-    realmesh.Nx = Nx;
-    realmesh.Ny = Ny;
-    realmesh.Nz = Nz;
+    Nx = this->Nx, Ny = this->Ny, Nz = this->Nz;
+    std::cout << "INFO:\tCreate real mesh with size: " << Nx << "x" << Ny << "x" << Nz << "." <<  std::endl;
 
     std::ofstream file;
     std::string filename = "../data/files/analytical_mesh.txt";
@@ -118,7 +117,7 @@ inline MeshArray MeshArray::real_solution(bool draw){
         for (double y = 0; y <= 1; y += 1./Ny) {
             for (double x = 0; x <= 1; x += 1./Nx) {
                 double value = real_function(x, y, z);
-                realmesh.array.push_back(value);
+                this->array.push_back(value);
                 if (draw) {
                     file << std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " " + std::to_string(value) + "\n";
                 }
@@ -128,8 +127,8 @@ inline MeshArray MeshArray::real_solution(bool draw){
     
     file.close();
 
-    realmesh.capacity = realmesh.array.capacity();
-    realmesh.size = realmesh.array.size();
+    this->capacity = this->array.capacity();
+    this->size = this->array.size();
 
     if (draw) {
         /* Run py-script to create mesh */
@@ -138,5 +137,5 @@ inline MeshArray MeshArray::real_solution(bool draw){
 
     std::string commandDelete = "rm " + filename;
     std::system(commandDelete.c_str());
-    return realmesh;
+    return *this;
 };
