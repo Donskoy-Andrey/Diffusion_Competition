@@ -29,12 +29,12 @@ int main(int argc, char** argv) {
     MeshArray real_mesh = mesh.real_solution(true);
 
     /*
-    Examples to get params of mesh.
-    std::cout << real_mesh.get_Nx() << std::endl;
-    std::cout << real_mesh.get_Ny() << std::endl;
-    std::cout << real_mesh.get_Nz() << std::endl;
-    std::cout << real_mesh.get_array().size() << std::endl;
-    std::cout << real_mesh(3,3,3) << std::endl;;
+    // Examples to get params of mesh.
+    std::cout << real_mesh.get_Nx() << std::endl; // x-dimension (amount of nodes on x-axis)
+    std::cout << real_mesh.get_Ny() << std::endl; // y-dimension (amount of nodes on y-axis) 
+    std::cout << real_mesh.get_Nz() << std::endl; // z-dimension (amount of nodes on z-axis)
+    std::cout << real_mesh.get_array() << std::endl; // values of all nodes
+    std::cout << real_mesh(3,3,3) << std::endl;  // element with index x=3, y=3, z=3
     */
 
     return 0;
