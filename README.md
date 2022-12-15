@@ -3,12 +3,6 @@
 ## Формулировка задачи диффузии
 Рассматривается решение нестационарного уравнения диффузии с неизвестной U.
 
-
-## Аналитическое решение
-<p align="center">
-  <img src="data/images/analytical.png">
-</p>
-
 ## Start code
 
 ```bash
@@ -19,3 +13,8 @@ cmake ..
 make
 ./main 5 5 5
 ```
+
+## Аналитическое решение
+<p align="center">
+  <img src="data/images/analytical.png">
+</p>
