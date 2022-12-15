@@ -1,6 +1,15 @@
 #include <iostream>
 #include "mesh/creating.h"
 
+/* 
+    START CODE:
+    
+    mkdir build
+    cd build
+    cmake ..
+    make
+    ./main 5 5 5
+*/
 int main(int argc, char** argv) {
     int Nx = 0;
     int Ny = 0;
