@@ -4,6 +4,7 @@
 /* 
     START CODE:
     
+    pip install -r requirements.txt
     mkdir build
     cd build
     cmake ..
