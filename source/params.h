@@ -2,16 +2,16 @@
 #include <cmath>
 
 bool draw = false;
-bool verbose = false;
+bool verbose = true;
 double eps = 0.000001;
 
-// int Nx = 10;
-// int Ny = 10;
-// int Nz = 10;
+const int Nx = 40;
+const int Ny = 40;
+const int Nz = 40;
 
-const int Nx = 120;
-const int Ny = 60;
-const int Nz = 20;
+// const int Nx = 120;
+// const int Ny = 60;
+// const int Nz = 20;
 
 double delta_x = 1. / (Nx - 1);
 double delta_y = 1. / (Ny - 1);
