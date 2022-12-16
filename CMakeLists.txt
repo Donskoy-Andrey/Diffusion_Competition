@@ -13,6 +13,4 @@ source/sampling
 add_executable(
     main source/main.cpp
     source/mesh/creating.h
-    source/sampling/FDM.h
-    source/sampling/FDM.cpp
 )

@@ -1,14 +1,15 @@
-#pragma once
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <fstream>
-#include "../mesh/creating.h"
+// #pragma once
+// #include <iostream>
+// #include <vector>
+// #include <cmath>
+// #include <fstream>
+// #include "creating.h"
 
-/* Finite Difference Method */
+// /* Finite Difference Method */
 
-double delta(int Nx, int Ny, int Nz, std::string variable);
+// double diff(MeshArray & mesh, int i, int j, int k, 
+//     double delta_x, double delta_y, double delta_z, double delta_t,
+//     double dx, double dy, double dz
+// );
 
-double delta_t(int Nx, int Ny, int Nz);
-
-double razn_sh(MeshArray & mesh);
+// MeshArray get_final_solution(MeshArray & mesh);

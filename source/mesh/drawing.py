@@ -13,7 +13,7 @@ def numpyToVTK(xs: list, ys: list, zs: list, values: list, filename: str) -> Non
     pointsToVTK(
         f"../data/files/{output}", 
         xs, ys, zs, 
-        data = {'U_analytical': values}
+        data = {'U': values}
     )
     print(f"INFO:\tImage saved ({values.shape[0]} points).")
 

@@ -1,5 +1,6 @@
 #include <iostream>
-#include "mesh/creating.h"
+#include "creating.h"
+#include "FDM.h"
 
 /* 
     START CODE:
@@ -27,6 +28,7 @@ int main(int argc, char** argv) {
 
     MeshArray mesh(Nx, Ny, Nz);
     MeshArray real_mesh = mesh.real_solution(true);
+    MeshArray our_mesh = mesh.get_final_solution(true);
 
     /*
     // Examples to get params of mesh.
