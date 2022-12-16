@@ -4,9 +4,15 @@
 bool draw = true;
 bool verbose = false;
 double eps = 0.000001;
-int Nx = 10;
-int Ny = 10;
-int Nz = 10;
+
+int Nx = 30;
+int Ny = 30;
+int Nz = 30;
+
+// int Nx = 120;
+// int Ny = 60;
+// int Nz = 20;
+
 double delta_x = 1. / (Nx - 1);
 double delta_y = 1. / (Ny - 1);
 double delta_z = 1. / (Nz - 1);
