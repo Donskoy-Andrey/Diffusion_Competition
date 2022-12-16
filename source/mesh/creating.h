@@ -5,21 +5,17 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
-#include "params.h"
+#include "../params.h"
 
 class MeshArray {
     private:
         /* Size and data of mesh*/
-        int Nx = 0;
-        int Ny = 0;
-        int Nz = 0;
         std::vector <double> array;
 
     public:
         /* Create mesh s*/
-        MeshArray() = default;
+        MeshArray();
         ~MeshArray() = default;
-        inline MeshArray(int Nx, int Ny, int Nz);
         inline double operator() (int i, int j, int k);
 
         /* Compute useful params */
@@ -29,29 +25,15 @@ class MeshArray {
         /* Get and draw solutions */
         inline MeshArray real_solution();
         inline MeshArray get_final_solution();
-        inline void get_image(std::string filename);
+        inline void get_image(std::string  & filename);
 };
+
+MeshArray::MeshArray(){
+    MeshArray::array = std::vector <double> (Nx*Ny*Nz, 0);
+}
 
 inline double MeshArray::operator()(int i, int j, int k){
     return MeshArray::array[i + Nx*j + Nx*Ny*k];
-}
-
-inline MeshArray::MeshArray(int Nx, int Ny, int Nz){
-    MeshArray::Nx = Nx;
-    MeshArray::Ny = Ny;
-    MeshArray::Nz = Nz;
-
-    if (verbose){
-        std::cout << "INFO:\tSize of mesh: " << Nx << "x" << Ny << "x" << Nz << "." << std::endl;
-    }
-
-    for (double z = 0; z <= 1. + eps; z += 1./(Nz-1)) {
-        for (double y = 0; y <= 1. + eps; y += 1./(Ny-1)) {
-            for (double x = 0; x <= 1. + eps; x += 1./(Nx-1)) {
-                MeshArray::array.push_back(0.);
-            }
-        }
-    }
 }
 
 inline double real_function(double x, double y, double z, double t = 1){
@@ -59,7 +41,7 @@ inline double real_function(double x, double y, double z, double t = 1){
         (1 - std::exp(-(dx+dy+dz)*M_PI*M_PI*t));
 }
 
-inline void data_to_vtu(std::string filename){
+inline void data_to_vtu(std::string & filename){
     std::string command = "python3 ../source/mesh/drawing.py ";
     command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz) + " " + filename;
     if (verbose){
@@ -69,7 +51,7 @@ inline void data_to_vtu(std::string filename){
     std::system(command.c_str());
 }
 
-inline void MeshArray::get_image(std::string filename){
+inline void MeshArray::get_image(std::string & filename){
     std::ofstream file;
     file.open(filename);
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz - 1)) {
@@ -85,7 +67,6 @@ inline void MeshArray::get_image(std::string filename){
             }
         }
     }
-
     file.close();
     data_to_vtu(filename);
     std::string commandDelete = "rm " + filename;
@@ -119,13 +100,12 @@ inline MeshArray MeshArray::next_solver()
 {
     double value;
     std::vector <double> tmp;
-
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
             for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
-                i = x / (1. / (Nx - 1));
-                j = y / (1. / (Ny - 1));
-                k = z / (1. / (Nz - 1));
+                    i = x / (1. / (Nx - 1));
+                    j = y / (1. / (Ny - 1));
+                    k = z / (1. / (Nz - 1));
                 if ((x == 0) or (y == 0) or (z == 0) or (x == 1) or (y == 1) or (z == 1)){
                     value = 0;   
                 } else {
@@ -158,9 +138,9 @@ inline double MeshArray::diff(int i, int j, int k)
 
 inline MeshArray MeshArray::get_final_solution(){
     double t = 0;
-    MeshArray mesh(Nx, Ny, Nz);
+    MeshArray mesh;
     if (verbose){
-        std::cout << "INFO:\tIteration by time: "  << std::endl << "\t";
+        std::cout << "INFO:\tIteration by time: "  << std::endl << "\t";        
     }
     while (t <= 1){
         mesh = mesh.next_solver();
