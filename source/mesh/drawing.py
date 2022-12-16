@@ -2,6 +2,7 @@ import sys
 import numpy as np
 from pyevtk.hl import pointsToVTK
 
+verbose = False
 
 def numpyToVTK(xs: list, ys: list, zs: list, values: list, filename: str) -> None:
     xs = np.array(xs)
@@ -9,13 +10,13 @@ def numpyToVTK(xs: list, ys: list, zs: list, values: list, filename: str) -> Non
     zs = np.array(zs)
     values = np.array(values)
     output = filename.split('/')[-1].split('.')[-2]
-
     pointsToVTK(
         f"../data/files/{output}", 
         xs, ys, zs, 
         data = {'U': values}
     )
-    print(f"INFO:\tImage saved ({values.shape[0]} points).")
+    if verbose:
+        print(f"INFO:\tImage saved ({values.shape[0]} points).")
 
 def main():
     Nx = int(sys.argv[1])
