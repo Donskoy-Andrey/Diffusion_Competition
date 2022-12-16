@@ -1,6 +1,5 @@
 #include <iostream>
 #include "creating.h"
-#include "FDM.h"
 
 /* 
     START CODE:

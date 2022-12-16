@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
-#include "FDM.h"
 
 class MeshArray {
     private:
