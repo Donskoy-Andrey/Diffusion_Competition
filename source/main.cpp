@@ -27,7 +27,10 @@ int main(int argc, char** argv) {
         return -1;
     }
     */
+
     MeshArray mesh;
+    MeshArray real_mesh = mesh.real_solution();
+    
     MeshArray our_mesh = mesh.get_final_solution();
     return 0;
 }
