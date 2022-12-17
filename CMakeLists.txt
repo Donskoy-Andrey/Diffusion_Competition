@@ -7,11 +7,9 @@ project(Diffusion DESCRIPTION "Sirius competition" LANGUAGES CXX)
 include_directories(
 source
 source/mesh
-source/sampling
 )
 
 add_executable(
     main source/main.cpp
     source/mesh/creating.h
-    source/params.h
 )
