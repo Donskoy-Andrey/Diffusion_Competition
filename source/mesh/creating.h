@@ -10,11 +10,11 @@
 class MeshArray {
     private:
         /* Size and data of mesh*/
-        double array[Nx*Ny*Nz] = {0.0};
+        std::vector <double> array;
 
     public:
         /* Create mesh s*/
-        MeshArray() = default;
+        MeshArray();
         ~MeshArray() = default;
         inline double operator() (int i, int j, int k);
 
@@ -25,11 +25,15 @@ class MeshArray {
         /* Get and draw solutions */
         inline MeshArray real_solution();
         inline MeshArray get_final_solution();
-        inline void get_image(std::string & filename);
+        inline void get_image(std::string  & filename);
 };
 
-inline double MeshArray::operator()(int i, int j, int k){ 
-    return MeshArray::array[i + Nx * j + Nx * Ny * k];
+MeshArray::MeshArray(){
+    MeshArray::array = std::vector <double> (Nx*Ny*Nz, 0);
+}
+
+inline double MeshArray::operator()(int i, int j, int k){
+    return MeshArray::array[i + Nx*j + Nx*Ny*k];
 }
 
 inline double real_function(double x, double y, double z, double t = 1){
@@ -71,17 +75,16 @@ inline void MeshArray::get_image(std::string & filename){
 }
 
 inline MeshArray MeshArray::real_solution(){
+    MeshArray::array.clear();
     #if VERBOSE
         std::cout << "INFO:\tCreate real mesh with size: " << Nx << "x" << Ny << "x" << Nz << "." <<  std::endl;
     #endif
-
-    int counter = 0;
+    
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz - 1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny - 1)) {
             for (double x = 0; x <= 1. + eps; x += 1. / (Nx - 1)) {
                 double value = real_function(x, y, z);
-                MeshArray::array[counter] = value;
-                ++counter;
+                MeshArray::array.push_back(value);
             }
         }
     }
@@ -96,9 +99,8 @@ inline MeshArray MeshArray::real_solution(){
 
 inline MeshArray MeshArray::next_solver()
 {
-    int i, j, k;
     double value;
-    int counter = 0;
+    int i, j, k;
     std::vector <double> tmp;
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
@@ -111,11 +113,11 @@ inline MeshArray MeshArray::next_solver()
                 } else {
                     value = this->diff(i, j, k);
                 }
-                this->array[counter] = value;
-                ++counter;
+                tmp.push_back(value);
             }
         }
     }
+    this->array = tmp;
     return *this;
 }
 
@@ -184,7 +186,7 @@ inline MeshArray MeshArray::get_final_solution(){
                 }
             }
         }
-        std::cout << "ERROR:\t" << "MAX: " << max_error << std::endl;
+        std::cout << "ERROR:\t" << "\tMAX: " << max_error << std::endl;
     #endif
     return mesh;
 }
