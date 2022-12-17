@@ -55,17 +55,18 @@ inline void data_to_vtu(std::string & filename){
 }
 
 inline void MeshArray::get_image(std::string & filename){
-    int i, j, k;
     std::ofstream file;
     file.open(filename);
+    int counter = 0;
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz - 1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny - 1)) {
             for (double x = 0; x <= 1. + eps; x += 1. / (Nx - 1)) {
-
-                    i = x / (1. / (Nx - 1));
-                    j = y / (1. / (Ny - 1));
-                    k = z / (1. / (Nz - 1));
-
+                    int i = x / delta_x;
+                    int j = y / delta_y;
+                    int k = z / delta_z;
+                std::cout << i << " " << j << " " << k << " " << this->array.size() << " " << counter 
+                << " " << (i+1) + Nx*(j+1) + Nx*Ny*(k+1) << std::endl;
+                ++counter;
                 double value = this->operator()(i, j, k);
                 file << std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " " + std::to_string(value) + "\n";
             }
@@ -73,8 +74,8 @@ inline void MeshArray::get_image(std::string & filename){
     }
     file.close();
     data_to_vtu(filename);
-    std::string commandDelete = "rm " + filename;
-    std::system(commandDelete.c_str());
+    // std::string commandDelete = "rm " + filename;
+    // std::system(commandDelete.c_str());
 }
 
 inline void MeshArray::real_solution(){
@@ -104,12 +105,13 @@ inline void MeshArray::next_solver()
     double value = 0;
     std::vector <double> tmp;
     tmp.clear();
+    int c = 0;
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
             for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
-                    int i = x / (1. / (Nx - 1));
-                    int j = y / (1. / (Ny - 1));
-                    int k = z / (1. / (Nz - 1));
+                    int i = x / delta_x;
+                    int j = y / delta_y;
+                    int k = z / delta_z;
                 if ((std::fabs(x - 0) < eps) or 
                     (std::fabs(y - 0) < eps) or
                     (std::fabs(z - 0) < eps) or
@@ -120,14 +122,18 @@ inline void MeshArray::next_solver()
                 } else {
                     value = this->diff(i, j, k);
                 }
+                // std::cout << i << " " << j << " " << k << " " << value << std::endl;
                 tmp.push_back(value);
             }
         }
     }
+    // std::cout << this->array.size() << std::endl;
+    // std::cout << " --- >>" << 19 + Nx*19 + (Nx+0)*(Ny+0)*19 << std::endl;
     this->array.clear();
     for (int i = 0; i < Nx*Ny*Nz; ++i) {
         this->array.push_back(tmp[i]);
     }
+    // std::cout << this->operator()(19,19,19) << std::endl;
 }
 
 inline double const MeshArray::diff(int i, int j, int k)
@@ -183,9 +189,9 @@ inline void MeshArray::get_final_solution(){
         for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
             for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
                 for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
-                        int i = x / (1. / (Nx - 1));
-                        int j = y / (1. / (Ny - 1));
-                        int k = z / (1. / (Nz - 1));
+                        int i = x / delta_x;
+                        int j = y / delta_y;
+                        int k = z / delta_z;
                     // std::cout << meshnew(i,j,k) << " " << this->operator()(i,j,k) << std::endl;
                     double value = std::fabs(meshnew(i,j,k) - this->operator()(i,j,k));
                     if (value > max_error) {

@@ -15,3 +15,5 @@
 
 
     rm ./a.out ../data/files/analytical_mesh.vtu ../data/files/our_mesh.vtu; g++ main.cpp -O && ./a.out
+
+    17 17 17 1.90608 7578
