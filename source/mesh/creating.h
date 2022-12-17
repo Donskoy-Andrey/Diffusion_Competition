@@ -44,14 +44,15 @@ inline double real_function(double x, double y, double z, double t = 1){
 inline void data_to_vtu(std::string & filename){
     std::string command = "python3 ../source/mesh/drawing.py ";
     command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz) + " " + filename;
-    if (verbose){
+    #if VERBOSE
         std::cout << "INFO:\tRun python script." << std::endl;
         std::cout << "\t" << command << std::endl;
-    }
+    #endif
     std::system(command.c_str());
 }
 
 inline void MeshArray::get_image(std::string & filename){
+    int i, j, k;
     std::ofstream file;
     file.open(filename);
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz - 1)) {
@@ -75,9 +76,9 @@ inline void MeshArray::get_image(std::string & filename){
 
 inline MeshArray MeshArray::real_solution(){
     MeshArray::array.clear();
-    if (verbose){
+    #if VERBOSE
         std::cout << "INFO:\tCreate real mesh with size: " << Nx << "x" << Ny << "x" << Nz << "." <<  std::endl;
-    }
+    #endif
     
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz - 1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny - 1)) {
@@ -88,10 +89,10 @@ inline MeshArray MeshArray::real_solution(){
         }
     }
 
-    if (draw) {
+    #if DRAW
         std::string filename = "../data/files/analytical_mesh.txt";
         MeshArray::get_image(filename);
-    }
+    #endif
 
     return *this;
 }
@@ -99,6 +100,7 @@ inline MeshArray MeshArray::real_solution(){
 inline MeshArray MeshArray::next_solver()
 {
     double value;
+    int i, j, k;
     std::vector <double> tmp;
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
@@ -139,23 +141,23 @@ inline double MeshArray::diff(int i, int j, int k)
 inline MeshArray MeshArray::get_final_solution(){
     double t = 0;
     MeshArray mesh;
-    if (verbose){
+    #if VERBOSE
         std::cout << "INFO:\tIteration by time: "  << std::endl << "\t";        
-    }
+    #endif
     while (t <= 1){
         mesh = mesh.next_solver();
         t += delta_t;
-        if (verbose){
+        #if VERBOSE
             std::cout << t  << " | ";
-        }
+        #endif
     }
-    if (verbose){
+    #if VERBOSE
         std::cout << std::endl;
-    }
+    #endif
 
-    if (draw) {
+    #if DRAW
         std::string filename = "../data/files/our_mesh.txt";
         MeshArray::get_image(filename);
-    }
+    #endif
     return mesh;
 }
