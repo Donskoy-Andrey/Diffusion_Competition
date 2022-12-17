@@ -9,6 +9,7 @@
 #define Nx 20
 #define Ny 20
 #define Nz 20
+// #define M_PI 3.1415
 
 // #define Nx 120
 // #define Ny 60

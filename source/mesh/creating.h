@@ -109,7 +109,14 @@ inline void MeshArray::next_solver()
                     int i = x / (1. / (Nx - 1));
                     int j = y / (1. / (Ny - 1));
                     int k = z / (1. / (Nz - 1));
-                if ((x == 0) or (y == 0) or (z == 0) or (x == 1) or (y == 1) or (z == 1)){
+                    std::cout << i << " " << j << " " << k << std::endl;
+                // if ((std::fabs(x - 0) < eps) or 
+                //     (std::fabs(y - 0) < eps) or
+                //     (std::fabs(z - 0) < eps) or
+                //     (std::fabs(x - 1) < eps) or
+                //     (std::fabs(y - 1) < eps) or
+                //     (std::fabs(z - 1) < eps)){
+                if ((i%Nx) * (j%Ny) * (k%Nz) == 0){
                     value = 0;   
                 } else {
                     value = this->diff(i, j, k);
@@ -124,11 +131,11 @@ inline void MeshArray::next_solver()
 inline double const MeshArray::diff(int i, int j, int k)
 {
     double LxU = (this->operator()(i - 1, j, k) - 
-        2 * this->operator()(i, j, k) + this->operator()(i + 1, j, k)) / std::pow(delta_x, 2);
+        2 * this->operator()(i, j, k) + this->operator()(i + 1, j, k)) / (delta_x * delta_x);
     double LyU = (this->operator()(i, j - 1, k) - 
-        2 * this->operator()(i, j, k) + this->operator()(i, j + 1, k)) / std::pow(delta_y, 2);
+        2 * this->operator()(i, j, k) + this->operator()(i, j + 1, k)) / (delta_y * delta_y);
     double LzU = (this->operator()(i, j, k - 1) - 
-        2 * this->operator()(i, j, k) + this->operator()(i, j, k + 1)) / std::pow(delta_z, 2);
+        2 * this->operator()(i, j, k) + this->operator()(i, j, k + 1)) / (delta_z * delta_z);
 
     double x = delta_x * i;
     double y = delta_y * j;
@@ -166,19 +173,16 @@ inline void MeshArray::get_final_solution(){
     #endif
 
     #if GET_ERROR
-        double sum = 0;
-        double counter = 0;
-        double max_value = 0;
+        double max_error = 0.0;
         MeshArray meshnew;
         meshnew.real_solution();
-        int i, j, k;
-        double max_error = 0.0;
         for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
             for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
                 for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
-                    i = x / (1. / (Nx - 1));
-                    j = y / (1. / (Ny - 1));
-                    k = z / (1. / (Nz - 1));
+                        int i = x / (1. / (Nx - 1));
+                        int j = y / (1. / (Ny - 1));
+                        int k = z / (1. / (Nz - 1));
+                    // std::cout << meshnew(i,j,k) << " " << this->operator()(i,j,k) << std::endl;
                     double value = std::fabs(meshnew(i,j,k) - this->operator()(i,j,k));
                     if (value > max_error) {
                         max_error = value;
