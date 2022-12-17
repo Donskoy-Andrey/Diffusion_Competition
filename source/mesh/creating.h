@@ -5,12 +5,19 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
+#include <algorithm>
 
-double const eps = 1e-6;
+#define my_const (dx + dy + dz) * M_PI * M_PI
+
+// double const eps = 1e-6;
 
 int const Nx = 120;
 int const Ny = 60;
 int const Nz = 20;
+
+// int const Nx = 20;
+// int const Ny = 20;
+// int const Nz = 20;
 
 double const delta_x = (1./(Nx - 1));
 double const delta_y = (1./(Ny - 1));
@@ -25,6 +32,7 @@ double const delta_t = (0.9/(2 * (dx / std::pow(delta_x, 2) + dy / std::pow(delt
 class MeshArray {
     private:
         /* Size and data of mesh*/
+        // std::vector <double> array;
         double array[Nx*Ny*Nz] = {0.0};
 
     public:
@@ -71,45 +79,45 @@ inline void MeshArray::real_solution(){
 inline void MeshArray::next_solver()
 {
     double value = 0;
-    std::vector <double> tmp;
+    double tmp[Nx*Ny*Nz] = {0.0};
+
+    int counter = 0;
     for (int k = 0; k < Nz; ++k) {
         for (int j = 0; j < Ny; ++j) {
             for (int i = 0; i < Nx; ++i) {
-                double x = delta_x * i;    
-                double y = delta_y * j;    
-                double z = delta_z * k;  
-                if ((std::fabs(x - 0) < eps) or 
-                    (std::fabs(y - 0) < eps) or
-                    (std::fabs(z - 0) < eps) or
-                    (std::fabs(x - 1) < eps) or
-                    (std::fabs(y - 1) < eps) or
-                    (std::fabs(z - 1) < eps)){
-                    value = 0;   
+                if ((i == 0) or 
+                    (j == 0) or
+                    (k == 0) or
+                    (i == (Nx - 1)) or
+                    (j == (Ny - 1)) or
+                    (k == (Nz - 1))){
+                    tmp[counter] = 0;
                 } else {
-                    value = this->diff(i, j, k);
+                    tmp[counter] = this->diff(i, j, k);
                 }
-                tmp.push_back(value);
+                ++counter;
             }
         }
     }
-    this->array = tmp;
+    std::swap(this->array, tmp);
+
 }
 
 inline double const MeshArray::diff(int i, int j, int k)
 {
+    double current = this->operator()(i, j, k);
     double LxU = (this->operator()(i - 1, j, k) - 
-        2 * this->operator()(i, j, k) + this->operator()(i + 1, j, k)) / (delta_x * delta_x);
+        2 * current + this->operator()(i + 1, j, k)) / (delta_x * delta_x);
     double LyU = (this->operator()(i, j - 1, k) - 
-        2 * this->operator()(i, j, k) + this->operator()(i, j + 1, k)) / (delta_y * delta_y);
+        2 * current + this->operator()(i, j + 1, k)) / (delta_y * delta_y);
     double LzU = (this->operator()(i, j, k - 1) - 
-        2 * this->operator()(i, j, k) + this->operator()(i, j, k + 1)) / (delta_z * delta_z);
+        2 * current + this->operator()(i, j, k + 1)) / (delta_z * delta_z);
 
     double x = delta_x * i;
     double y = delta_y * j;
     double z = delta_z * k;
-    double f = (dx + dy + dz) * M_PI * M_PI * std::sin(M_PI*x) * std::sin(M_PI*y) * std::sin(M_PI*z);
-    double U_next = this->operator()(i, j, k) + delta_t * (f + dx*LxU + dy*LyU + dz*LzU);
-    return U_next;
+    double f = my_const * std::sin(M_PI*x) * std::sin(M_PI*y) * std::sin(M_PI*z);
+    return current + delta_t * (f + dx*LxU + dy*LyU + dz*LzU);
 }
 
 inline void MeshArray::get_final_solution(){
@@ -132,6 +140,7 @@ inline void MeshArray::get_final_solution(){
                 double x = delta_x * i;    
                 double y = delta_y * j;    
                 double z = delta_z * k;  
+                // std::cout << meshnew(i,j,k) << " " << this->operator()(i,j,k) << std::endl;
                 double value = std::fabs(meshnew(i,j,k) - this->operator()(i,j,k));
                 if (value > max_error) {
                     max_error = value;
