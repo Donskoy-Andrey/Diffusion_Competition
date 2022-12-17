@@ -5,11 +5,8 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
-#include <algorithm>
 
 #define my_const (dx + dy + dz) * M_PI * M_PI
-
-// double const eps = 1e-6;
 
 int const Nx = 120;
 int const Ny = 60;
@@ -32,7 +29,6 @@ double const delta_t = (0.9/(2 * (dx / std::pow(delta_x, 2) + dy / std::pow(delt
 class MeshArray {
     private:
         /* Size and data of mesh*/
-        // std::vector <double> array;
         double array[Nx*Ny*Nz] = {0.0};
 
     public:
@@ -68,8 +64,7 @@ inline void MeshArray::real_solution(){
                 double x = delta_x * i;    
                 double y = delta_y * j;    
                 double z = delta_z * k;  
-                double value = real_function(x, y, z);
-                this->array[counter] = value;
+                this->array[counter] = real_function(x, y, z);;
                 ++counter;
             }
         }
@@ -78,29 +73,21 @@ inline void MeshArray::real_solution(){
 
 inline void MeshArray::next_solver()
 {
-    double value = 0;
     double tmp[Nx*Ny*Nz] = {0.0};
 
     int counter = 0;
     for (int k = 0; k < Nz; ++k) {
         for (int j = 0; j < Ny; ++j) {
             for (int i = 0; i < Nx; ++i) {
-                if ((i == 0) or 
-                    (j == 0) or
-                    (k == 0) or
-                    (i == (Nx - 1)) or
-                    (j == (Ny - 1)) or
-                    (k == (Nz - 1))){
-                    tmp[counter] = 0;
-                } else {
-                    tmp[counter] = this->diff(i, j, k);
+                if ((i != 0) and (j != 0) and (k != 0) and
+                    (i != (Nx - 1)) and (j != (Ny - 1)) and (k != (Nz - 1))){
+                        tmp[counter] = this->diff(i, j, k);
                 }
                 ++counter;
             }
         }
     }
     std::swap(this->array, tmp);
-
 }
 
 inline double const MeshArray::diff(int i, int j, int k)
