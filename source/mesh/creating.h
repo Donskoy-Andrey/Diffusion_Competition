@@ -139,6 +139,8 @@ inline double MeshArray::diff(int i, int j, int k)
 }
 
 inline MeshArray MeshArray::get_final_solution(){
+    
+    const clock_t begin_time = std::clock();
     double t = 0;
     MeshArray mesh;
     #if VERBOSE
@@ -152,17 +154,39 @@ inline MeshArray MeshArray::get_final_solution(){
         #endif
     }
 
-    #if GET_ERROR
-        
-    #endif
-
     #if VERBOSE
         std::cout << std::endl;
     #endif
 
+    std::cout << "---> RESULT:\t" << float(std::clock () - begin_time ) / CLOCKS_PER_SEC << "s" << std::endl;
+
     #if DRAW
         std::string filename = "../data/files/our_mesh.txt";
         MeshArray::get_image(filename);
+    #endif
+
+    #if GET_ERROR
+        double sum = 0;
+        double counter = 0.;
+        double max_value = 0;
+        MeshArray meshnew;
+        MeshArray real_mesh = meshnew.real_solution();
+        int i, j, k;
+        double max_error = 0.0;
+        for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
+            for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
+                for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
+                    i = x / (1. / (Nx - 1));
+                    j = y / (1. / (Ny - 1));
+                    k = z / (1. / (Nz - 1));
+                    double value = std::fabs(real_mesh(i,j,k) - mesh(i,j,k));
+                    if (value > max_error) {
+                        max_error = value;
+                    }
+                }
+            }
+        }
+        std::cout << "ERROR:\t" << "\tMAX: " << max_error << std::endl;
     #endif
     return mesh;
 }

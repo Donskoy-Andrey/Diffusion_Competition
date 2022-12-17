@@ -31,8 +31,6 @@ int main(int argc, char** argv) {
     MeshArray mesh;
     MeshArray real_mesh = mesh.real_solution();
     
-    const clock_t begin_time = std::clock();
-        MeshArray our_mesh = mesh.get_final_solution();
-    std::cout << "RESULT:\t" << float(std::clock () - begin_time ) / CLOCKS_PER_SEC << "s" << std::endl;
+    MeshArray our_mesh = mesh.get_final_solution();
     return 0;
 }
