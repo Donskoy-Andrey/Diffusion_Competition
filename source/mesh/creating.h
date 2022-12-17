@@ -4,9 +4,6 @@
 #include <vector>
 #include <iomanip>
 #include <cmath>
-#include <fstream>
-
-#define my_const (dx + dy + dz) * M_PI * M_PI
 
 int const Nx = 120;
 int const Ny = 60;
@@ -25,6 +22,8 @@ double const dy = 0.15;
 double const dz = 0.1;
 
 double const delta_t = (0.9/(2 * (dx / std::pow(delta_x, 2) + dy / std::pow(delta_y, 2) + dz / std::pow(delta_z, 2))));
+double const my_const = (dx + dy + dz) * M_PI * M_PI;
+
 
 class MeshArray {
     private:
@@ -127,7 +126,6 @@ inline void MeshArray::get_final_solution(){
                 double x = delta_x * i;    
                 double y = delta_y * j;    
                 double z = delta_z * k;  
-                // std::cout << meshnew(i,j,k) << " " << this->operator()(i,j,k) << std::endl;
                 double value = std::fabs(meshnew(i,j,k) - this->operator()(i,j,k));
                 if (value > max_error) {
                     max_error = value;
