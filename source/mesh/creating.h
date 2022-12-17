@@ -5,9 +5,9 @@
 #include <iomanip>
 #include <cmath>
 
-int const Nx = 120;
-int const Ny = 60;
-int const Nz = 20;
+int const Nx = 122;
+int const Ny = 62;
+int const Nz = 22;
 
 // int const Nx = 20;
 // int const Ny = 20;
@@ -16,6 +16,14 @@ int const Nz = 20;
 double const delta_x = (1./(Nx - 1));
 double const delta_y = (1./(Ny - 1));
 double const delta_z = (1./(Nz - 1));
+
+double const delta_x_MPI = delta_x * M_PI;
+double const delta_y_MPI = delta_y * M_PI;
+double const delta_z_MPI = delta_z * M_PI;
+
+double const delta_x_2 = delta_x * delta_x;
+double const delta_y_2 = delta_y * delta_y;
+double const delta_z_2 = delta_z * delta_z;
 
 double const dx = 0.25;
 double const dy = 0.15;
@@ -93,16 +101,16 @@ inline double const MeshArray::diff(int i, int j, int k)
 {
     double current = this->operator()(i, j, k);
     double LxU = (this->operator()(i - 1, j, k) - 
-        2 * current + this->operator()(i + 1, j, k)) / (delta_x * delta_x);
+        2 * current + this->operator()(i + 1, j, k)) / delta_x_2;
     double LyU = (this->operator()(i, j - 1, k) - 
-        2 * current + this->operator()(i, j + 1, k)) / (delta_y * delta_y);
+        2 * current + this->operator()(i, j + 1, k)) / delta_y_2;
     double LzU = (this->operator()(i, j, k - 1) - 
-        2 * current + this->operator()(i, j, k + 1)) / (delta_z * delta_z);
+        2 * current + this->operator()(i, j, k + 1)) / delta_z_2;
 
-    double x = delta_x * i;
-    double y = delta_y * j;
-    double z = delta_z * k;
-    double f = my_const * std::sin(M_PI*x) * std::sin(M_PI*y) * std::sin(M_PI*z);
+    double x = delta_x_MPI * i;
+    double y = delta_y_MPI * j;
+    double z = delta_z_MPI * k;
+    double f = my_const * std::sin(x) * std::sin(y) * std::sin(z);
     return current + delta_t * (f + dx*LxU + dy*LyU + dz*LzU);
 }
 
@@ -115,7 +123,7 @@ inline void MeshArray::get_final_solution(){
         t += delta_t;
     }
 
-    std::cout << "---> RESULT:\t" << float(std::clock () - begin_time ) / CLOCKS_PER_SEC << "s" << std::endl;
+    std::cout << "---> RESULT:\t" << float(std::clock () - begin_time) / CLOCKS_PER_SEC << "s" << std::endl;
 
     double max_error = 0.0;
     MeshArray meshnew;
