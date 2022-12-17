@@ -103,20 +103,19 @@ inline void MeshArray::next_solver()
 {
     double value = 0;
     std::vector <double> tmp;
+    tmp.clear();
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
             for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
                     int i = x / (1. / (Nx - 1));
                     int j = y / (1. / (Ny - 1));
                     int k = z / (1. / (Nz - 1));
-                    std::cout << i << " " << j << " " << k << std::endl;
-                // if ((std::fabs(x - 0) < eps) or 
-                //     (std::fabs(y - 0) < eps) or
-                //     (std::fabs(z - 0) < eps) or
-                //     (std::fabs(x - 1) < eps) or
-                //     (std::fabs(y - 1) < eps) or
-                //     (std::fabs(z - 1) < eps)){
-                if ((i%Nx) * (j%Ny) * (k%Nz) == 0){
+                if ((std::fabs(x - 0) < eps) or 
+                    (std::fabs(y - 0) < eps) or
+                    (std::fabs(z - 0) < eps) or
+                    (std::fabs(x - 1) < eps) or
+                    (std::fabs(y - 1) < eps) or
+                    (std::fabs(z - 1) < eps)){
                     value = 0;   
                 } else {
                     value = this->diff(i, j, k);
@@ -125,7 +124,10 @@ inline void MeshArray::next_solver()
             }
         }
     }
-    this->array = tmp;
+    this->array.clear();
+    for (int i = 0; i < Nx*Ny*Nz; ++i) {
+        this->array.push_back(tmp[i]);
+    }
 }
 
 inline double const MeshArray::diff(int i, int j, int k)
@@ -153,12 +155,14 @@ inline void MeshArray::get_final_solution(){
     #if VERBOSE
         std::cout << "INFO:\tIteration by time: "  << std::endl << "\t";        
     #endif
-    while (t <= 1){
+    int counter = 0;
+    while (t < 1){
         this->next_solver();
         t += delta_t;
         #if VERBOSE
             std::cout << t  << " | ";
         #endif
+        ++counter;
     }
 
     #if VERBOSE
