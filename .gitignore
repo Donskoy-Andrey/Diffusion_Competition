@@ -5,3 +5,4 @@ cmake-build-Release
 .git
 .idea
 main
+source/a.out
