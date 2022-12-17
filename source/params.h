@@ -2,13 +2,13 @@
 #include <cmath>
 
 #define DRAW true
-#define VERBOSE true
+#define VERBOSE false
 #define GET_ERROR true
 #define eps 0.000001
 
-#define Nx 40
-#define Ny 40
-#define Nz 40
+#define Nx 20
+#define Ny 20
+#define Nz 20
 
 // #define Nx 120
 // #define Ny 60

@@ -12,3 +12,6 @@
     //     ++counter;
     // }
     // std::cout << "ERROR:\t" << "SUM: " << sum / counter << "\tMAX: " << max_value << std::endl;
+
+
+    rm ./a.out ../data/files/analytical_mesh.vtu ../data/files/our_mesh.vtu; g++ main.cpp -O && ./a.out

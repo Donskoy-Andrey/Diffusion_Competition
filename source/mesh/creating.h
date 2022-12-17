@@ -16,27 +16,30 @@ class MeshArray {
         /* Create mesh s*/
         MeshArray();
         ~MeshArray() = default;
-        inline double operator() (int i, int j, int k);
+        inline double const operator()(int i, int j, int k);
 
         /* Compute useful params */
-        inline double diff(int i, int j, int k);
-        inline MeshArray next_solver();
+        inline double const diff(int i, int j, int k);
+        inline void next_solver();
 
         /* Get and draw solutions */
-        inline MeshArray real_solution();
-        inline MeshArray get_final_solution();
+        inline void real_solution();
+        inline void get_final_solution();
         inline void get_image(std::string  & filename);
 };
 
 MeshArray::MeshArray(){
-    MeshArray::array = std::vector <double> (Nx*Ny*Nz, 0);
+    int counter = 0;
+    for (int i = 0; i < Nx*Ny*Nz; ++i){
+        this->array.push_back(0.0);
+    }
 }
 
-inline double MeshArray::operator()(int i, int j, int k){
-    return MeshArray::array[i + Nx*j + Nx*Ny*k];
+inline double const MeshArray::operator()(int i, int j, int k){
+    return this->array[i + Nx*j + Nx*Ny*k];
 }
 
-inline double real_function(double x, double y, double z, double t = 1){
+inline double const real_function(double x, double y, double z, double t = 1){
     return std::sin(M_PI*x) * std::sin(M_PI*y) * std::sin(M_PI*z) *
         (1 - std::exp(-(dx+dy+dz)*M_PI*M_PI*t));
 }
@@ -63,7 +66,7 @@ inline void MeshArray::get_image(std::string & filename){
                     j = y / (1. / (Ny - 1));
                     k = z / (1. / (Nz - 1));
 
-                double value = MeshArray::operator()(i, j, k);
+                double value = this->operator()(i, j, k);
                 file << std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " " + std::to_string(value) + "\n";
             }
         }
@@ -74,17 +77,18 @@ inline void MeshArray::get_image(std::string & filename){
     std::system(commandDelete.c_str());
 }
 
-inline MeshArray MeshArray::real_solution(){
-    MeshArray::array.clear();
+inline void MeshArray::real_solution(){
     #if VERBOSE
         std::cout << "INFO:\tCreate real mesh with size: " << Nx << "x" << Ny << "x" << Nz << "." <<  std::endl;
     #endif
     
+    int counter = 0;
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz - 1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny - 1)) {
             for (double x = 0; x <= 1. + eps; x += 1. / (Nx - 1)) {
                 double value = real_function(x, y, z);
-                MeshArray::array.push_back(value);
+                this->array[counter] = value;
+                ++counter;
             }
         }
     }
@@ -93,21 +97,18 @@ inline MeshArray MeshArray::real_solution(){
         std::string filename = "../data/files/analytical_mesh.txt";
         MeshArray::get_image(filename);
     #endif
-
-    return *this;
 }
 
-inline MeshArray MeshArray::next_solver()
+inline void MeshArray::next_solver()
 {
-    double value;
-    int i, j, k;
+    double value = 0;
     std::vector <double> tmp;
     for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
         for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
             for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
-                    i = x / (1. / (Nx - 1));
-                    j = y / (1. / (Ny - 1));
-                    k = z / (1. / (Nz - 1));
+                    int i = x / (1. / (Nx - 1));
+                    int j = y / (1. / (Ny - 1));
+                    int k = z / (1. / (Nz - 1));
                 if ((x == 0) or (y == 0) or (z == 0) or (x == 1) or (y == 1) or (z == 1)){
                     value = 0;   
                 } else {
@@ -118,17 +119,16 @@ inline MeshArray MeshArray::next_solver()
         }
     }
     this->array = tmp;
-    return *this;
 }
 
-inline double MeshArray::diff(int i, int j, int k)
+inline double const MeshArray::diff(int i, int j, int k)
 {
-    double LxU = (MeshArray::operator()(i - 1, j, k) - 
-        2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i + 1, j, k)) / std::pow(delta_x, 2);
-    double LyU = (MeshArray::operator()(i, j - 1, k) - 
-        2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i, j + 1, k)) / std::pow(delta_y, 2);
-    double LzU = (MeshArray::operator()(i, j, k - 1) - 
-        2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i, j, k + 1)) / std::pow(delta_z, 2);
+    double LxU = (this->operator()(i - 1, j, k) - 
+        2 * this->operator()(i, j, k) + this->operator()(i + 1, j, k)) / std::pow(delta_x, 2);
+    double LyU = (this->operator()(i, j - 1, k) - 
+        2 * this->operator()(i, j, k) + this->operator()(i, j + 1, k)) / std::pow(delta_y, 2);
+    double LzU = (this->operator()(i, j, k - 1) - 
+        2 * this->operator()(i, j, k) + this->operator()(i, j, k + 1)) / std::pow(delta_z, 2);
 
     double x = delta_x * i;
     double y = delta_y * j;
@@ -138,16 +138,16 @@ inline double MeshArray::diff(int i, int j, int k)
     return U_next;
 }
 
-inline MeshArray MeshArray::get_final_solution(){
+inline void MeshArray::get_final_solution(){
     
     const clock_t begin_time = std::clock();
     double t = 0;
-    MeshArray mesh;
+
     #if VERBOSE
         std::cout << "INFO:\tIteration by time: "  << std::endl << "\t";        
     #endif
     while (t <= 1){
-        mesh = mesh.next_solver();
+        this->next_solver();
         t += delta_t;
         #if VERBOSE
             std::cout << t  << " | ";
@@ -167,10 +167,10 @@ inline MeshArray MeshArray::get_final_solution(){
 
     #if GET_ERROR
         double sum = 0;
-        double counter = 0.;
+        double counter = 0;
         double max_value = 0;
         MeshArray meshnew;
-        MeshArray real_mesh = meshnew.real_solution();
+        meshnew.real_solution();
         int i, j, k;
         double max_error = 0.0;
         for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
@@ -179,7 +179,7 @@ inline MeshArray MeshArray::get_final_solution(){
                     i = x / (1. / (Nx - 1));
                     j = y / (1. / (Ny - 1));
                     k = z / (1. / (Nz - 1));
-                    double value = std::fabs(real_mesh(i,j,k) - mesh(i,j,k));
+                    double value = std::fabs(meshnew(i,j,k) - this->operator()(i,j,k));
                     if (value > max_error) {
                         max_error = value;
                     }
@@ -188,5 +188,4 @@ inline MeshArray MeshArray::get_final_solution(){
         }
         std::cout << "ERROR:\t" << "\tMAX: " << max_error << std::endl;
     #endif
-    return mesh;
 }
