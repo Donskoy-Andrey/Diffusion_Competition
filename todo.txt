@@ -1,0 +1,14 @@
+    // double sum = 0;
+    // int counter = 0;
+    // double max_value = 0;
+    // MeshArray real, real_mesh;
+    // real_mesh = real.real_solution();
+    // for (int i = 0; i < Nx*Ny*Nz; ++i){
+    //     double value = std::fabs(mesh.array[i] - real_mesh.array[i]);
+    //     sum += value;
+    //     if (value > max_value){
+    //         max_value = value;
+    //     }
+    //     ++counter;
+    // }
+    // std::cout << "ERROR:\t" << "SUM: " << sum / counter << "\tMAX: " << max_value << std::endl;
