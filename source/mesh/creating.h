@@ -151,6 +151,11 @@ inline MeshArray MeshArray::get_final_solution(){
             std::cout << t  << " | ";
         #endif
     }
+
+    #if GET_ERROR
+        
+    #endif
+
     #if VERBOSE
         std::cout << std::endl;
     #endif
