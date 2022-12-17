@@ -3,16 +3,16 @@
 
 #define DRAW true
 #define VERBOSE false
-#define GET_ERROR false
+#define GET_ERROR true
 #define eps 0.000001
 
-#define Nx 10
-#define Ny 10
-#define Nz 10
+// #define Nx 10
+// #define Ny 10
+// #define Nz 10
 
-// #define Nx 120
-// #define Ny 60
-// #define Nz 20
+#define Nx 120
+#define Ny 60
+#define Nz 20
 
 #define delta_x 1./(Nx - 1)
 #define delta_y 1./(Ny - 1)

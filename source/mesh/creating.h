@@ -20,11 +20,11 @@ class MeshArray {
 
         /* Compute useful params */
         inline double diff(int i, int j, int k);
-        inline void next_solver();
+        inline MeshArray next_solver();
 
         /* Get and draw solutions */
-        inline void real_solution();
-        inline void get_final_solution();
+        inline MeshArray real_solution();
+        inline MeshArray get_final_solution();
         inline void get_image(std::string & filename);
 };
 
@@ -40,7 +40,7 @@ inline double real_function(double x, double y, double z, double t = 1){
 inline void data_to_vtu(std::string & filename){
     std::string command = "python3 ../source/mesh/drawing.py ";
     command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz) + " " + filename;
-    #if VERBOSE == true
+    #if VERBOSE
         std::cout << "INFO:\tRun python script." << std::endl;
         std::cout << "\t" << command << std::endl;
     #endif
@@ -70,8 +70,8 @@ inline void MeshArray::get_image(std::string & filename){
     std::system(commandDelete.c_str());
 }
 
-inline void MeshArray::real_solution(){
-    #if VERBOSE == true
+inline MeshArray MeshArray::real_solution(){
+    #if VERBOSE
         std::cout << "INFO:\tCreate real mesh with size: " << Nx << "x" << Ny << "x" << Nz << "." <<  std::endl;
     #endif
 
@@ -85,22 +85,24 @@ inline void MeshArray::real_solution(){
             }
         }
     }
-    
-    #if DRAW == true
+
+    #if DRAW
         std::string filename = "../data/files/analytical_mesh.txt";
         MeshArray::get_image(filename);
     #endif
+
+    return *this;
 }
 
-inline void MeshArray::next_solver()
+inline MeshArray MeshArray::next_solver()
 {
     int i, j, k;
     double value;
     int counter = 0;
-
-    for (double z = 0; z <= 1. + eps; z += 1. / (Nz - 1)) {
-        for (double y = 0; y <= 1. + eps; y += 1. / (Ny - 1)) {
-            for (double x = 0; x <= 1. + eps; x += 1. / (Nx - 1)) {
+    std::vector <double> tmp;
+    for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
+        for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
+            for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
                     i = x / (1. / (Nx - 1));
                     j = y / (1. / (Ny - 1));
                     k = z / (1. / (Nz - 1));
@@ -114,16 +116,16 @@ inline void MeshArray::next_solver()
             }
         }
     }
+    return *this;
 }
 
 inline double MeshArray::diff(int i, int j, int k)
 {
-    
     double LxU = (MeshArray::operator()(i - 1, j, k) - 
         2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i + 1, j, k)) / std::pow(delta_x, 2);
     double LyU = (MeshArray::operator()(i, j - 1, k) - 
         2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i, j + 1, k)) / std::pow(delta_y, 2);
-    double LzU = (MeshArray::operator()(i, j, k + 1) - 
+    double LzU = (MeshArray::operator()(i, j, k - 1) - 
         2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i, j, k + 1)) / std::pow(delta_z, 2);
 
     double x = delta_x * i;
@@ -134,46 +136,55 @@ inline double MeshArray::diff(int i, int j, int k)
     return U_next;
 }
 
-inline void MeshArray::get_final_solution() {
+inline MeshArray MeshArray::get_final_solution(){
+    
+    const clock_t begin_time = std::clock();
     double t = 0;
-    #if VERBOSE == true
+    MeshArray mesh;
+    #if VERBOSE
         std::cout << "INFO:\tIteration by time: "  << std::endl << "\t";        
     #endif
-
     while (t <= 1){
-        this->next_solver();
-
+        mesh = mesh.next_solver();
         t += delta_t;
-        #if VERBOSE == true
-            std::cout << t << " | ";
+        #if VERBOSE
+            std::cout << t  << " | ";
         #endif
     }
-    
-    #if VERBOSE == true
+
+    #if VERBOSE
         std::cout << std::endl;
     #endif
 
-    #if DRAW == true
+    std::cout << "---> RESULT:\t" << float(std::clock () - begin_time ) / CLOCKS_PER_SEC << "s" << std::endl;
+
+    #if DRAW
         std::string filename = "../data/files/our_mesh.txt";
         MeshArray::get_image(filename);
     #endif
 
-    #if GET_ERROR == true
+    #if GET_ERROR
         double sum = 0;
         double counter = 0.;
         double max_value = 0;
-        MeshArray real_mesh;
-        real_mesh.real_solution();
-        for (int i = 0; i < Nx*Ny*Nz; ++i){
-            std::cout << this->array[i] << " " << real_mesh.array[i] << std::endl;
-            double value = std::fabs(this->array[i] - real_mesh.array[i]);
-            sum += value;
-            if (value > max_value){
-                max_value = value;
+        MeshArray meshnew;
+        MeshArray real_mesh = meshnew.real_solution();
+        int i, j, k;
+        double max_error = 0.0;
+        for (double z = 0; z <= 1. + eps; z += 1. / (Nz-1)) {
+            for (double y = 0; y <= 1. + eps; y += 1. / (Ny-1)) {
+                for (double x = 0; x <= 1. + eps; x += 1. / (Nx-1)) {
+                    i = x / (1. / (Nx - 1));
+                    j = y / (1. / (Ny - 1));
+                    k = z / (1. / (Nz - 1));
+                    double value = std::fabs(real_mesh(i,j,k) - mesh(i,j,k));
+                    if (value > max_error) {
+                        max_error = value;
+                    }
+                }
             }
-            ++counter;
         }
-        std::cout << sum << " " << counter << std::endl;
-        std::cout << "ERROR:\t" << "MEAN: " << sum / counter << "\tMAX: " << max_value << std::endl;
+        std::cout << "ERROR:\t" << "\tMAX: " << max_error << std::endl;
     #endif
+    return mesh;
 }

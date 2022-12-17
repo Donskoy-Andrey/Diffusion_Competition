@@ -27,13 +27,7 @@ int main(int argc, char** argv) {
         return -1;
     }
     */
-    MeshArray mesh2;
-
-    mesh2.real_solution();
-    
     MeshArray mesh;
-    const clock_t begin_time = std::clock();
-        mesh.get_final_solution();
-    std::cout << "RESULT:\t" << float(std::clock () - begin_time ) / CLOCKS_PER_SEC << "s" << std::endl;
+    MeshArray our_mesh = mesh.get_final_solution();
     return 0;
 }
