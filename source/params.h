@@ -1,8 +1,8 @@
 #pragma once
 #include <cmath>
 
-bool draw = false;
-bool verbose = true;
+bool draw = true;
+bool verbose = false;
 double eps = 0.000001;
 
 const int Nx = 40;

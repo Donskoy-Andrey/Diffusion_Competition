@@ -125,7 +125,7 @@ inline double MeshArray::diff(int i, int j, int k)
         2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i + 1, j, k)) / std::pow(delta_x, 2);
     double LyU = (MeshArray::operator()(i, j - 1, k) - 
         2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i, j + 1, k)) / std::pow(delta_y, 2);
-    double LzU = (MeshArray::operator()(i, j, k + 1) - 
+    double LzU = (MeshArray::operator()(i, j, k - 1) - 
         2 * MeshArray::operator()(i, j, k) + MeshArray::operator()(i, j, k + 1)) / std::pow(delta_z, 2);
 
     double x = delta_x * i;
