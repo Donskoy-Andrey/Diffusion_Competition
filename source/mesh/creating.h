@@ -184,7 +184,7 @@ inline MeshArray MeshArray::get_final_solution(){
                 }
             }
         }
-        std::cout << "ERROR:\t" << "\tMAX: " << max_error << std::endl;
+        std::cout << "ERROR:\t" << "MAX: " << max_error << std::endl;
     #endif
     return mesh;
 }
