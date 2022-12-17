@@ -25,11 +25,11 @@ double const delta_t = (0.9/(2 * (dx / std::pow(delta_x, 2) + dy / std::pow(delt
 class MeshArray {
     private:
         /* Size and data of mesh*/
-        std::vector <double> array;
+        double array[Nx*Ny*Nz] = {0.0};
 
     public:
         /* Create mesh s*/
-        MeshArray();
+        MeshArray() = default;
         ~MeshArray() = default;
         inline double const operator()(int i, int j, int k);
 
@@ -42,13 +42,6 @@ class MeshArray {
         inline void get_final_solution();
         inline void get_image(std::string & filename);
 };
-
-MeshArray::MeshArray(){
-    int counter = 0;
-    for (int i = 0; i < Nx*Ny*Nz; ++i){
-        this->array.push_back(0.0);
-    }
-}
 
 inline double const MeshArray::operator()(int i, int j, int k){
     return this->array[i + Nx*j + Nx*Ny*k];
