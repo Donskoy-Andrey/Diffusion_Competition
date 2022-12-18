@@ -147,6 +147,15 @@ inline void MeshArray::get_final_solution(){
     std::cout << "ERROR:\t" << "\tMAX: " << max_error << std::endl;
 }
 
+inline void data_to_vtu(std::string & filename){
+    std::string command = "python3 ../source/mesh/drawing.py ";
+    command += std::to_string(Nx) + " " + std::to_string(Ny) + " " + std::to_string(Nz) + " " + filename;
+    #if VERBOSE
+        std::cout << "INFO:\tRun python script." << std::endl;
+        std::cout << "\t" << command << std::endl;
+    #endif
+    std::system(command.c_str());
+}
 
 inline void MeshArray::get_image(std::string & filename){
     std::ofstream file;
