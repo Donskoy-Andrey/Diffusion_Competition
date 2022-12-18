@@ -128,7 +128,7 @@ inline void MeshArray::get_final_solution(){
 
     std::cout << "---> RESULT:\t" << float(std::clock () - begin_time) / CLOCKS_PER_SEC << "s" << std::endl;
 
-    if DRAW {
+    if (DRAW) {
         std::string filename = "../data/files/our_mesh.txt";
         MeshArray::get_image(filename);
     }
