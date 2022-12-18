@@ -4,6 +4,9 @@
 #include <vector>
 #include <iomanip>
 #include <cmath>
+#include <fstream>
+
+bool const DRAW = false;
 
 int const Nx = 122;
 int const Ny = 62;
@@ -142,4 +145,26 @@ inline void MeshArray::get_final_solution(){
         }
     }
     std::cout << "ERROR:\t" << "\tMAX: " << max_error << std::endl;
+}
+
+
+inline void MeshArray::get_image(std::string & filename){
+    std::ofstream file;
+    file.open(filename);
+    for (int k = 0; k < Nz; ++k) {
+        for (int j = 0; j < Ny; ++j) {
+            for (int i = 0; i < Nx; ++i) {
+                double x = delta_x * i;    
+                double y = delta_y * j;    
+                double z = delta_z * k;    
+
+                double value = this->operator()(i, j, k);
+                file << std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " " + std::to_string(value) + "\n";
+            }
+        }
+    }
+    file.close();
+    data_to_vtu(filename);
+    std::string commandDelete = "rm " + filename;
+    std::system(commandDelete.c_str());
 }
