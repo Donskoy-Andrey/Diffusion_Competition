@@ -2,3 +2,7 @@
 1. + посчитать доп константы (пи квадрат дх ду дз)
 2. + 4 раза считается operator(i,j,k)
 3. собственный swap
+4. delete 
+double x = delta_x * i + myID * ((Nx - 2) / P + 2) * delta_x;     
+// double y = delta_y * j;    
+// double z = delta_z * k; 
