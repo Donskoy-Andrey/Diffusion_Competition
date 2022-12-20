@@ -88,7 +88,7 @@ inline void MeshArray::real_solution(int P, int myID) {
     }
 
     if (DRAW) {
-        std::string filename = "./data/files/" + std::to_string(myID) + ".txt";
+        std::string filename = "./data/files/analytical_" + std::to_string(myID) + ".txt";
         this->get_image(filename, P, myID);
     }
 }
