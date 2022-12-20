@@ -62,7 +62,6 @@ class MeshArray {
 };
 
 inline double const MeshArray::operator()(int i, int j, int k, int P) {
-    // std::cout << this->array[i + ((Nx - 2) / P + 2) * j + ((Nx - 2) / P + 2) * Ny * k] << std::endl;  // ERROR???
     return this->array[i + ((Nx - 2) / P + 2) * j + ((Nx - 2) / P + 2) * Ny * k];
 }
 
@@ -80,12 +79,14 @@ inline void MeshArray::real_solution(int P, int myID) {
                 double x = delta_x * (i + myID * (((Nx - 2) / P + 2) - 2));
                 double y = delta_y * j;
                 double z = delta_z * k;
+
                 this->array[counter] = real_function(x, y, z);
                 ++counter;
             }
         }
     }
-    if (false) {
+
+    if (DRAW) {
         std::string filename = "./data/files/" + std::to_string(myID) + ".txt";
         this->get_image(filename, P, myID);
     }
@@ -106,10 +107,7 @@ void MeshArray::calculate_plate(int P, int myID, double * loc_array, std::string
 }
 
 inline void MeshArray::next_solver(int P, int myID) {
-    double tmp[((Nx - 2) / processor_count + 2) * Ny * Nz];
-    for (int i = 0; i < ((Nx - 2) / processor_count + 2) * Ny * Nz; ++i) {
-        tmp[i] = 0.0;
-    }
+    double tmp[((Nx - 2) / processor_count + 2) * Ny * Nz] = {};
 
     MPI_Request request[4];
     MPI_Status statuses[4];
@@ -126,10 +124,10 @@ inline void MeshArray::next_solver(int P, int myID) {
         this->calculate_plate(P, myID, loc_array_right_send, "right");
 
         /* Send our right edge as neighbour's left edge */
-        MPI_Isend(&loc_array_right_send[0], Nz*Ny, MPI_DOUBLE, myID + 1, 0, MPI_COMM_WORLD, &request[num_request++]);
+        MPI_Isend(loc_array_right_send, Nz*Ny, MPI_DOUBLE, myID + 1, 0, MPI_COMM_WORLD, &request[num_request++]);
         
         /* Get neighbour's left edge as our right edge */
-        MPI_Irecv(&loc_array_left_load[0], Nz*Ny, MPI_DOUBLE, myID + 1, 0, MPI_COMM_WORLD, &request[num_request++]);
+        MPI_Irecv(loc_array_left_load, Nz*Ny, MPI_DOUBLE, myID + 1, 0, MPI_COMM_WORLD, &request[num_request++]);
     }
 
     if (myID != 0) {
@@ -137,10 +135,10 @@ inline void MeshArray::next_solver(int P, int myID) {
         this->calculate_plate(P, myID, loc_array_left_send, "left");
 
         /* Send our left edge as neighbour's right edge */
-        MPI_Isend(&loc_array_left_send[0], Nz * Ny, MPI_DOUBLE, myID - 1, 0, MPI_COMM_WORLD, &request[num_request++]);
+        MPI_Isend(loc_array_left_send, Nz * Ny, MPI_DOUBLE, myID - 1, 0, MPI_COMM_WORLD, &request[num_request++]);
 
         /* Get neighbour's right edge as our left edge */
-        MPI_Irecv(&loc_array_right_load[0], Nz * Ny, MPI_DOUBLE, myID - 1, 0, MPI_COMM_WORLD, &request[num_request++]);
+        MPI_Irecv(loc_array_right_load, Nz * Ny, MPI_DOUBLE, myID - 1, 0, MPI_COMM_WORLD, &request[num_request++]);
     }
 
     MPI_Waitall(num_request, request, statuses);
@@ -173,6 +171,7 @@ inline void MeshArray::next_solver(int P, int myID) {
         }    
     }
 
+    /* TEST:    Save data.*/
     std::string filename = "./data/files/test_" + std::to_string(myID) + ".txt";
     std::ofstream file;
     file.open(filename);
@@ -185,15 +184,22 @@ inline void MeshArray::next_solver(int P, int myID) {
         }
     }
 
-    for (int k = 0; k < Nz; ++k) {
-        for (int j = 0; j < Ny; ++j) {
-            for (int i = 1; i < ((Nx - 2) / P + 2) - 1; ++i) {
-                tmp[
-                    i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
-                ] = this->diff(i, j, k, P, myID);
-            }
-        }
+    /* Check sum in (t + 1) array*/
+    int summator = 0.0;
+    for (int i = 0; i < Nz*Ny*((Nx-2)/P + 2); ++i) {
+        summator += tmp[i];
     }
+    std::cout << myID << "\tSUMM to tmp : " << summator << std::endl;
+
+    // for (int k = 0; k < Nz; ++k) {
+    //     for (int j = 0; j < Ny; ++j) {
+    //         for (int i = 1; i < ((Nx - 2) / P + 2) - 1; ++i) {
+    //             tmp[
+    //                 i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
+    //             ] = this->diff(i, j, k, P, myID);
+    //         }
+    //     }
+    // }
 
     std::swap(this->array, tmp);
 }
