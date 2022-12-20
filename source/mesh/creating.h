@@ -10,13 +10,13 @@
 int const processor_count = 4;
 bool const DRAW = false;
 
-// int const Nx = 122;
-// int const Ny = 62;
-// int const Nz = 22;
+int const Nx = 122;
+int const Ny = 62;
+int const Nz = 22;
 
-int const Nx = 14;
-int const Ny = 10;
-int const Nz = 10;
+// int const Nx = 14;
+// int const Ny = 10;
+// int const Nz = 10;
 
 double const delta_x = (1. / (Nx - 1));
 double const delta_y = (1. / (Ny - 1));
