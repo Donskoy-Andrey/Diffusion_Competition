@@ -6,7 +6,7 @@
 #include <cmath>
 #include <fstream>
 
-bool const DRAW = false;
+bool const DRAW = true;
 
 int const Nx = 122;
 int const Ny = 62;
@@ -78,6 +78,10 @@ inline void MeshArray::real_solution(){
                 ++counter;
             }
         }
+    }
+    if (DRAW) {
+        std::string filename = "../data/files/analytical_mesh.txt";
+        MeshArray::get_image(filename);
     }
 }
 
@@ -179,6 +183,6 @@ inline void MeshArray::get_image(std::string & filename){
     }
     file.close();
     data_to_vtu(filename);
-    std::string commandDelete = "rm " + filename;
-    std::system(commandDelete.c_str());
+    // std::string commandDelete = "rm " + filename;
+    // std::system(commandDelete.c_str());
 }
