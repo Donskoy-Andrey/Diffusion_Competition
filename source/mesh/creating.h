@@ -100,7 +100,7 @@ void MeshArray::calculate_plate(int P, int myID, double * loc_array, std::string
     int counter = 0;
     for (int k = 0; k < Nz; ++k) {
         for (int j = 0; j < Ny; ++j) {
-            loc_array[counter] = (this->diff(i, j, k, P, myID)); // local i
+            loc_array[counter] = this->diff(i, j, k, P, myID); // local i
             ++counter;
         }
     }
@@ -109,8 +109,8 @@ void MeshArray::calculate_plate(int P, int myID, double * loc_array, std::string
 inline void MeshArray::next_solver(int P, int myID) {
     double tmp[((Nx - 2) / processor_count + 2) * Ny * Nz] = {};
 
-    MPI_Request request[4];
-    MPI_Status statuses[4];
+    MPI_Request request[4] = {};
+    MPI_Status statuses[4] = {};
 
     int num_request = 0;
 
@@ -147,8 +147,8 @@ inline void MeshArray::next_solver(int P, int myID) {
     if (myID != (P - 1)) {
         int i = ((Nx - 2) / P) + 2 - 1; // n - 1 
         int loc_counter = 0;
-        for (int k = 0; k < Nz; ++k) {
-            for (int j = 0; j < Ny; ++j) {
+        for (int k = 0; k < Nz - 1; ++k) {
+            for (int j = 0; j < Ny - 1; ++j) {
                 tmp[
                     i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
                 ] = loc_array_left_load[loc_counter];
@@ -161,8 +161,8 @@ inline void MeshArray::next_solver(int P, int myID) {
     if (myID != 0) {
         int i = 0;
         int loc_counter = 0;
-        for (int k = 0; k < Nz; ++k) {
-            for (int j = 0; j < Ny; ++j) {
+        for (int k = 0; k < Nz - 1; ++k) {
+            for (int j = 0; j < Ny - 1; ++j) {
                 tmp[
                     i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
                 ] = loc_array_right_load[loc_counter];
@@ -172,6 +172,7 @@ inline void MeshArray::next_solver(int P, int myID) {
     }
 
     /* TEST:    Save data.*/
+/*
     std::string filename = "./data/files/test_" + std::to_string(myID) + ".txt";
     std::ofstream file;
     file.open(filename);
@@ -183,13 +184,7 @@ inline void MeshArray::next_solver(int P, int myID) {
             }
         }
     }
-
-    /* Check sum in (t + 1) array*/
-    int summator = 0.0;
-    for (int i = 0; i < Nz*Ny*((Nx-2)/P + 2); ++i) {
-        summator += tmp[i];
-    }
-    std::cout << myID << "\tSUMM to tmp : " << summator << std::endl;
+*/
 
     // for (int k = 0; k < Nz; ++k) {
     //     for (int j = 0; j < Ny; ++j) {
@@ -205,6 +200,7 @@ inline void MeshArray::next_solver(int P, int myID) {
 }
 
 inline double const MeshArray::diff(int i, int j, int k, int P, int myID) {
+
     double current = this->operator()(i, j, k, P);
     double LxU = (this->operator()(i - 1, j, k, P) -
                   2 * current + this->operator()(i + 1, j, k, P)) /
