@@ -14,9 +14,9 @@ bool const DRAW = true;
 // int const Ny = 62;
 // int const Nz = 22;
 
-int const Nx = 6;
-int const Ny = 6;
-int const Nz = 6;
+int const Nx = 14;
+int const Ny = 10;
+int const Nz = 10;
 
 double const delta_x = (1. / (Nx - 1));
 double const delta_y = (1. / (Ny - 1));
@@ -37,29 +37,28 @@ double const dz = 0.1;
 double const delta_t = (0.9 / (2 * (dx / std::pow(delta_x, 2) + dy / std::pow(delta_y, 2) + dz / std::pow(delta_z, 2))));
 double const my_const = (dx + dy + dz) * M_PI * M_PI;
 
-class MeshArray
-{
-private:
-    /* Size and data of mesh*/
-    double array[((Nx - 2) / processor_count + 2) * Ny * Nz] = {0.0};
+class MeshArray {
+    private:
+        /* Size and data of mesh*/
+        double array[((Nx - 2) / processor_count + 2) * Ny * Nz] = {};
 
-public:
-    /* Create mesh s*/
-    MeshArray() = default;
-    ~MeshArray() = default;
-    inline double const operator()(int i, int j, int k, int P);
+    public:
+        /* Create mesh s*/
+        MeshArray() = default;
+        ~MeshArray() = default;
+        inline double const operator()(int i, int j, int k, int P);
 
-    /* Compute useful params */
-    inline double const diff(int i, int j, int k, int P, int myID);
-    inline void next_solver(int P, int myID);
+        /* Compute useful params */
+        inline double const diff(int i, int j, int k, int P, int myID);
+        inline void next_solver(int P, int myID);
 
-    /* Get and draw solutions */
-    inline void real_solution(int P, int myID);
-    inline void get_final_solution(int P, int myID);
-    inline void get_image(std::string &filename, int P, int myID);
+        /* Get and draw solutions */
+        inline void real_solution(int P, int myID);
+        inline void get_final_solution(int P, int myID);
+        inline void get_image(std::string &filename, int P, int myID);
 
-    /* Parallel process */
-    void calculate_plate(int P, int myID, double * loc_array, std::string i_type);
+        /* Parallel process */
+        void calculate_plate(int P, int myID, double * loc_array, std::string i_type);
 };
 
 inline double const MeshArray::operator()(int i, int j, int k, int P) {
@@ -107,18 +106,22 @@ void MeshArray::calculate_plate(int P, int myID, double * loc_array, std::string
 }
 
 inline void MeshArray::next_solver(int P, int myID) {
-    double tmp[((Nx - 2) / processor_count + 2) * Ny * Nz] = {0.0};
-    int counter = 0;
+    double tmp[((Nx - 2) / processor_count + 2) * Ny * Nz];
+    for (int i = 0; i < ((Nx - 2) / processor_count + 2) * Ny * Nz; ++i) {
+        tmp[i] = 0.0;
+    }
 
     MPI_Request request[4];
     MPI_Status statuses[4];
 
     int num_request = 0;
 
-    double loc_array_right_send[Nz*Ny] = {0.0};
-    double loc_array_left_load[Nz*Ny] = {0.0};
-    if (myID != (P - 1))
-    {
+    double loc_array_right_send[Nz*Ny] = {};
+    double loc_array_left_load[Nz*Ny] = {};
+    double loc_array_left_send[Nz*Ny] = {};
+    double loc_array_right_load[Nz*Ny] = {};
+
+    if (myID != (P - 1)) {
         /* Calculate our right edge */
         this->calculate_plate(P, myID, loc_array_right_send, "right");
 
@@ -128,11 +131,8 @@ inline void MeshArray::next_solver(int P, int myID) {
         /* Get neighbour's left edge as our right edge */
         MPI_Irecv(&loc_array_left_load[0], Nz*Ny, MPI_DOUBLE, myID + 1, 0, MPI_COMM_WORLD, &request[num_request++]);
     }
-    
-    double loc_array_left_send[Nz*Ny] = {0.0};
-    double loc_array_right_load[Nz*Ny] = {0.0};
-    if (myID != 0)
-    {
+
+    if (myID != 0) {
         /* Calculate our left edge */
         this->calculate_plate(P, myID, loc_array_left_send, "left");
 
@@ -141,8 +141,6 @@ inline void MeshArray::next_solver(int P, int myID) {
 
         /* Get neighbour's right edge as our left edge */
         MPI_Irecv(&loc_array_right_load[0], Nz * Ny, MPI_DOUBLE, myID - 1, 0, MPI_COMM_WORLD, &request[num_request++]);
-        
-        /* Write neighbour's right edge as our left edge */
     }
 
     MPI_Waitall(num_request, request, statuses);
