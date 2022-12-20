@@ -11,7 +11,7 @@ mkdir build
 cd build
 cmake ..
 make
-./main 5 5 5
+./main
 ```
 
 ## Analytical solution

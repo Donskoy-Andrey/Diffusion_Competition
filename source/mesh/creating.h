@@ -9,7 +9,10 @@
 
 int const processor_count = 1;
 bool const GET_ERROR = true;
-bool const DRAW = true;
+bool const DRAW = false;
+
+std::string const analytical_path = "./data/files/analytical_";
+std::string const output_path = "./data/files/output_";
 
 int const Nx = 122;
 int const Ny = 62;
@@ -88,7 +91,7 @@ inline void MeshArray::real_solution(int P, int myID) {
     }
 
     if (DRAW) {
-        std::string filename = "./data/files/analytical_" + std::to_string(myID) + ".txt";
+        std::string filename = analytical_path + std::to_string(myID) + ".txt";
         this->get_image(filename, P, myID);
     }
 }
@@ -223,7 +226,7 @@ inline void MeshArray::get_final_solution(int P, int myID) {
     if (myID == 0) std::cout << "---> RESULT:\t" << MPI_Wtime() - begin_time << "s" << std::endl;
    
     if (DRAW) {
-        std::string filename = "./data/files/our_" + std::to_string(myID) + ".txt";
+        std::string filename = output_path + std::to_string(myID) + ".txt";
         MeshArray::get_image(filename, P, myID);
     }
 
