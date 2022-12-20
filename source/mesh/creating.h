@@ -7,16 +7,17 @@
 #include <fstream>
 #include <mpi.h>
 
-int const processor_count = 4;
+int const processor_count = 1;
+bool const GET_ERROR = true;
 bool const DRAW = true;
 
-// int const Nx = 122;
-// int const Ny = 62;
-// int const Nz = 22;
+int const Nx = 122;
+int const Ny = 62;
+int const Nz = 22;
 
-int const Nx = 14;
-int const Ny = 10;
-int const Nz = 10;
+// int const Nx = 14;
+// int const Ny = 10;
+// int const Nz = 10;
 
 double const delta_x = (1. / (Nx - 1));
 double const delta_y = (1. / (Ny - 1));
@@ -100,7 +101,9 @@ void MeshArray::calculate_plate(int P, int myID, double * loc_array, std::string
     int counter = 0;
     for (int k = 0; k < Nz; ++k) {
         for (int j = 0; j < Ny; ++j) {
-            loc_array[counter] = this->diff(i, j, k, P, myID); // local i
+            if ((k != 0) and (k != Nz-1) and (j != 0) and (j != Ny - 1)) {
+                loc_array[counter] = this->diff(i, j, k, P, myID); // local i
+            }
             ++counter;
         }
     }
@@ -147,8 +150,8 @@ inline void MeshArray::next_solver(int P, int myID) {
     if (myID != (P - 1)) {
         int i = ((Nx - 2) / P) + 2 - 1; // n - 1 
         int loc_counter = 0;
-        for (int k = 0; k < Nz - 1; ++k) {
-            for (int j = 0; j < Ny - 1; ++j) {
+        for (int k = 0; k < Nz; ++k) {
+            for (int j = 0; j < Ny; ++j) {
                 tmp[
                     i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
                 ] = loc_array_left_load[loc_counter];
@@ -161,8 +164,8 @@ inline void MeshArray::next_solver(int P, int myID) {
     if (myID != 0) {
         int i = 0;
         int loc_counter = 0;
-        for (int k = 0; k < Nz - 1; ++k) {
-            for (int j = 0; j < Ny - 1; ++j) {
+        for (int k = 0; k < Nz; ++k) {
+            for (int j = 0; j < Ny; ++j) {
                 tmp[
                     i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
                 ] = loc_array_right_load[loc_counter];
@@ -171,30 +174,16 @@ inline void MeshArray::next_solver(int P, int myID) {
         }    
     }
 
-    /* TEST:    Save data.*/
-/*
-    std::string filename = "./data/files/test_" + std::to_string(myID) + ".txt";
-    std::ofstream file;
-    file.open(filename);
-    for (int k = 0; k < Nz; ++k) {
-        for (int j = 0; j < Ny; ++j) {
-            for (int i = 0; i < (Nx - 2) / P + 2; ++i) {
-                double value = tmp[i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)];
-                file << std::to_string(i) + " " + std::to_string(j) + " " + std::to_string(k) + " " + std::to_string(value) + "\n";
+    /* Write kernel's elements */
+    for (int k = 1; k < Nz - 1; ++k) {
+        for (int j = 1; j < Ny - 1; ++j) {
+            for (int i = 1; i < ((Nx - 2) / P + 2) - 1; ++i) {
+                tmp[
+                    i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
+                ] = this->diff(i, j, k, P, myID);
             }
         }
     }
-*/
-
-    // for (int k = 0; k < Nz; ++k) {
-    //     for (int j = 0; j < Ny; ++j) {
-    //         for (int i = 1; i < ((Nx - 2) / P + 2) - 1; ++i) {
-    //             tmp[
-    //                 i + j * ((Nx - 2) / P + 2) + k * Ny * ((Nx - 2) / P + 2)
-    //             ] = this->diff(i, j, k, P, myID);
-    //         }
-    //     }
-    // }
 
     std::swap(this->array, tmp);
 }
@@ -202,6 +191,7 @@ inline void MeshArray::next_solver(int P, int myID) {
 inline double const MeshArray::diff(int i, int j, int k, int P, int myID) {
 
     double current = this->operator()(i, j, k, P);
+
     double LxU = (this->operator()(i - 1, j, k, P) -
                   2 * current + this->operator()(i + 1, j, k, P)) /
                  delta_x_2;
@@ -227,8 +217,8 @@ inline void MeshArray::get_final_solution(int P, int myID) {
     while (t < 1) {
         this->next_solver(P, myID);
         t += delta_t;
-        break;
     }
+
     MPI_Barrier(MPI_COMM_WORLD);
     if (myID == 0) std::cout << "---> RESULT:\t" << MPI_Wtime() - begin_time << "s" << std::endl;
    
@@ -237,27 +227,24 @@ inline void MeshArray::get_final_solution(int P, int myID) {
         MeshArray::get_image(filename, P, myID);
     }
 
-    double max_error = 0.0;
-    MeshArray meshnew;
-    meshnew.real_solution(P, myID);
-    for (int k = 0; k < Nz; ++k) {
-        for (int j = 0; j < Ny; ++j) {
-            for (int i = 0; i < ((Nx - 2) / P + 2); ++i) {
-
-                // if (myID == 0) {
-                //     std::cout << meshnew(i, j, k, P) << " " << this->operator()(i, j, k, P) << std::endl;
-                // }
-
-                double value = std::fabs(meshnew(i, j, k, P) - this->operator()(i, j, k, P));
-                if (value > max_error) {
-                    max_error = value;
+    if (GET_ERROR) {
+        double max_error = 0.0;
+        MeshArray meshnew;
+        meshnew.real_solution(P, myID);
+        for (int k = 0; k < Nz; ++k) {
+            for (int j = 0; j < Ny; ++j) {
+                for (int i = 0; i < ((Nx - 2) / P + 2); ++i) {
+                    double value = std::fabs(meshnew(i, j, k, P) - this->operator()(i, j, k, P));
+                    if (value > max_error) {
+                        max_error = value;
+                    }
                 }
             }
         }
+        MPI_Barrier(MPI_COMM_WORLD);
+        std::cout << "ERROR:\t"
+                << "\tMAX: " << max_error << std::endl;
     }
-    MPI_Barrier(MPI_COMM_WORLD);
-    std::cout << "ERROR:\t"
-              << "\tMAX: " << max_error << std::endl;
 }
 
 inline void data_to_vtu(std::string & filename) {
@@ -273,7 +260,6 @@ inline void data_to_vtu(std::string & filename) {
 inline void MeshArray::get_image(std::string & filename, int P, int myID) {
     std::ofstream file;
     file.open(filename);
-    std::cout << filename << std::endl;
     for (int k = 0; k < Nz; ++k) {
         for (int j = 0; j < Ny; ++j) {
             for (int i = 0; i <  ((Nx - 2) / P + 2); ++i) {
@@ -288,6 +274,6 @@ inline void MeshArray::get_image(std::string & filename, int P, int myID) {
     }
     file.close();
     data_to_vtu(filename);
-    // std::string commandDelete = "rm " + filename;
-    // std::system(commandDelete.c_str());
+    std::string commandDelete = "rm " + filename;
+    std::system(commandDelete.c_str());
 }

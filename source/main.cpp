@@ -1,7 +1,7 @@
 #include "mesh/creating.h"
 
 /*
-    mpic++ main.cpp -O2 && mpirun -np 4 ./a.out 
+    mpic++ source/main.cpp -O2 && mpirun -np 4 ./a.out
 */
 
 int main(int argc, char** argv) {
