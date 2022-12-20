@@ -23,8 +23,7 @@ def main():
     Ny = int(sys.argv[2])
     Nz = int(sys.argv[3])
     filename = sys.argv[4]
-    xs, ys, zs, values = [], [], [], []
-    with open(filename, 'r') as file:
+    with open(r'data/files/0.txt', 'r') as file:
         for line in file.readlines():
             x, y, z, value = [float(i) for i in line.split()]
             xs.append(x)
