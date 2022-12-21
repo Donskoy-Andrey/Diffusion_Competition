@@ -11,7 +11,8 @@ int main(int argc, char** argv) {
     MPI_Comm_rank (MPI_COMM_WORLD, &myID);
     MPI_Barrier(MPI_COMM_WORLD);
         MeshArray mesh;
-        mesh.get_final_solution(P, myID);
+        // mesh.get_final_solution(P, myID);
+        mesh.real_solution(P, myID);
     MPI_Finalize();
     return 0;
 }
