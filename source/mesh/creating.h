@@ -73,7 +73,7 @@ class MeshArray {
 };
 
 inline double const MeshArray::operator()(int i, int j, int k, int P) {
-    return this->array[i + ((Nx - 2) / P + 2) * j + ((Nx - 2) / P + 2) * ((Ny - 2) / P + 2) * k];
+    return this->array[i + ((Nx - 2) / processor_count_x + 2) * j + ((Nx - 2) / processor_count_x + 2) * ((Ny - 2) / processor_count_y + 2) * k];
 }
 
 inline double const real_function(double x, double y, double z, double t = 1) {
