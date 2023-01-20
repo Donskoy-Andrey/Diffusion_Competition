@@ -3,22 +3,22 @@
 ## Formulation of the diffusion problem
 The solution of the non-stationary diffusion equation with unknown U is considered.
 ```math
-$U = U(x, y, z, t):$
+U = U(x, y, z, t):
 ```
 
 ```math
-$∂U/∂t - div (D · grad U) = f(x, y, z, t), (x,y,z)$
+∂U/∂t - div (D · grad U) = f(x, y, z, t), (x,y,z)
 ``` 
 
 принадлежит $Ω = [0; 1]^3$, t на отрезке $[0, T]$
 
 ```math
-$U(x, y, z, t) = g(x, y, z)$ 
+U(x, y, z, t) = g(x, y, z) 
 ```
 на границе области $∂Ω$
 
 ```math
-$U(x, y, z, 0) = 0$ 
+U(x, y, z, 0) = 0 
 ```
 в начальный момент времени
 
@@ -38,13 +38,13 @@ d_x & 0 & 0 \\
 
 Также зададим
 ```math
-$g(x, y, z) = 0$
-$f(x, y, z) = (d_x+d_y+d_z)·π²·sin(πx)sin(πy)sin(πz)$
+g(x, y, z) = 0
+f(x, y, z) = (d_x+d_y+d_z)·π²·sin(πx)sin(πy)sin(πz)
 ```
 
 У решаемого уравнения существует аналитическое решение:
 ```math
-$U_analityc = sin(πx)sin(πy)sin(πz)·(1 - exp(-(d_x+d_y+d_z)·π²·t))$
+U_analityc = sin(πx)sin(πy)sin(πz)·(1 - exp(-(d_x+d_y+d_z)·π²·t))
 ```
 
 # Дискретизация
