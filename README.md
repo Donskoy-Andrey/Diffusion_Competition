@@ -106,6 +106,14 @@ make
 </p>
 
 ## Implemented Solution
+
+Error rate - 0.00076
+Time of work with the optimizer:
+
+| 2 processors | 32 processors |
+|--------------|---------------|
+| 12.78 s      |  1.1 s        |
+
 <p align="center">
   <img src="data/images/front.png">
 </p>
