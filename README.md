@@ -135,7 +135,7 @@ The image below shows the solution when parallelized to 4 processors.
   <img src="data/images/mpi.gif">
 </p>
 
-## Note:
+## Note
 > To create images, a Python script was written that generates a .vtk file from the available data. 
 These files are further concatenated using the ParaView software. 
 The cuts of the resulting cube are also implemented in Paraview.
