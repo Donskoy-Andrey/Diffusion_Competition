@@ -108,13 +108,15 @@ make
 ## Implemented Solution
 
 Error rate - 0.00076
-Time of work with the optimizer:
 
-<p align="center">
+### Time of work with the optimizer
+<div align="center">
+
 | 2 processors | 32 processors |
 |--------------|---------------|
 | 12.78 s      |  1.1 s        |
-</p>
+
+</div>
 
 
 <p align="center">
