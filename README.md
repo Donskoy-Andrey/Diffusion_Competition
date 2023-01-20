@@ -50,47 +50,47 @@ U_analityc = sin(πx)·sin(πy)·sin(πz)·(1 - exp(-(d_x+d_y+d_z)·π²·t))
 ```
 
 # Дискретизация
-Построим в нашей области $Ω$ равномерную сетку, состоящую из параллелепипедов. 
+Let us construct in our domain $Ω$ a uniform grid consisting of parallelepipeds. 
 
-Выберем числа $Nx, Ny, Nz > 1$ - количество узлов, которые будут укладываться вдоль оси $Ox$, $Oy$ и $Oz$ соответственно.
-Тогда определим шаг сетки $Δx = \frac{1}{(Nx-1)}, Δy = \frac{1}{(Ny-1)}, Δz = \frac{1}{(Nz-1)}.$
-Также определим шаг по времени $Δt$.
-Обозначим через $V_{ijk}$ узел сетки с координатами $x_i = i·Δx, y_j = j·Δy, z_k = k·Δz.$
+We choose the numbers $Nx, Ny, Nz > 1$ - the number of nodes that will fit along the axis $Ox$, $Oy$ and $Oz$, respectively.
+Then we define the grid step $Δx = \frac{1}{(Nx-1)}, Δy = \frac{1}{(Ny-1)}, Δz = \frac{1}{(Nz-1)}. $
+We also define the time step $Δt$.
+Denote by $V_{ijk}$ the grid node with coordinates $x_i = i Δx, y_j = j Δy, z_k = k Δz.$
 
-Будем описывать дискретную функцию $[U]^h$ в момент времени $nΔt$ её степенями свободы, которые расположим в узлах сетки 
-и степень свободы в узле V_ijk обозначим как:
+We will describe the discrete function $[U]^h$ at time $nΔt$ by its degrees of freedom, which we will place at the grid nodes
+and the degree of freedom at the node V_ijk will be denoted as:
 ```math
 U_{ijk}^n, 0 ⩽ i ⩽ Nx-1, 0 ⩽ j ⩽ Ny-1, 0 ⩽ k ⩽ Nz-1.
 ```
-Дискретизуем наше уравнение по пространству методом конечных разностей, а по времени явной схемой Эйлера.
+We discretize our equation in space by the finite difference method, and in time by the explicit Euler scheme.
 
-Заметим, что для такой дискретизации шаг по времени должен удовлетворять условию Куранта:
+Note that for such a discretization, the time step must satisfy the Courant condition:
 ```math
 Δt < \frac{0.5}{ \frac{d_x } {(Δx)^2} + \frac{d_y}{(Δy)^2} + \frac{d_z}{(Δz)^2} }
 ```
-Введём дискретные операторы вторых пространственных производные:
+Let us introduce discrete operators of the second spatial derivatives:
 
 ```math
 Lx_{ijk} U^n = \frac{ U_{(i-1)jk}^n - 2·U_{ijk}^n + U_{(i+1)jk}^n }{Δx^2}
 Ly_{ijk} U^n = \frac{ U_{i(j-1)k}^n - 2·U_{ijk}^n + U_{i(j+1)k}^n }{Δy)^2}
 Lz_{ijk} U^n = \frac{ U_{ij(k-1)}^n - 2·U_{ijk}^n + U_{ij(k+1)}^n }{Δz^2}
 ```
-Также пусть
+Also let
 ```math
 f_{ijk}^n = f(i·Δx, j·Δy, k·Δz, nΔt)$ и $g_{ijk} = g(i·Δx, j·Δy, k·Δz)
 ```
-Тогда имеем следующую численную схему:
+Then we have the following numerical scheme:
 ```math
 U_{ijk}^{(n+1)} = U_{ijk}^n + Δt·(f_{ijk}^n + d_x·Lx_{ijk} U^n + d_y·Ly_{ijk} U^n + d_z·Lz_{ijk} U^n) 
 ```
-если
+if
 ```math
 1 ⩽ i ⩽ Nx-2, 1 ⩽ j ⩽ Ny-2, 1 ⩽ k ⩽ Nz-2
 ```
 ```math
 U_{ijk}^{(n+1)} = g_{ijk}$,
 ```
-если $(i%(Nx-1)) · (j%(Ny-1)) · (k%(Nz-1)) = 0$, где $x%y$ - операция взятия остатка от деления $x$ на $y$.
+if $(i%(Nx-1)) (j%(Ny-1)) (k%(Nz-1)) = 0$, where $x%y$ is the operation of taking the remainder of division $x$ on $y$.
 
 ## Start code
 
