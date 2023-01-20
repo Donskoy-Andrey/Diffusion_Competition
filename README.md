@@ -108,8 +108,9 @@ make
 ## Implemented Solution
 
 **Error rate** - 0.00076.
-Computing power (cluster) provided by the Institute of Numerical Mathematics 
-of the Russian Academy of Sciences, Moscow.
+
+Computing power (cluster) provided by the **Institute of Numerical Mathematics** 
+of the *Russian Academy of Sciences*, Moscow.
 Time of work with the optimizer:
 <div align="center">
 
