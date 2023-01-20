@@ -1,7 +1,7 @@
 # Competitive task on supercomputer practice
 
 ## Formulation of the diffusion problem
-The solution of the non-stationary diffusion equation with unknown U is considered.
+The solution of the non-stationary diffusion equation with unknown U is considered:
 ```math
 U = U(x, y, z, t):
 ```
@@ -10,19 +10,21 @@ U = U(x, y, z, t):
 ∂U/∂t - div (D · grad U) = f(x, y, z, t), (x,y,z)
 ``` 
 
-принадлежит $Ω = [0; 1]^3$, t на отрезке $[0, T]$
+где точка $(x, y, z)$ принадлежит $Ω = [0; 1]^3$, t на отрезке $[0, T]$
 
+Граничные условия:
 ```math
 U(x, y, z, t) = g(x, y, z) 
 ```
-на границе области $∂Ω$
+на границе области $∂Ω$, а начальные условия: 
 
 ```math
 U(x, y, z, 0) = 0 
 ```
-в начальный момент времени
+в начальный момент времени $t_0 = 0$
 
 Конечный момент времени зададим как $T = 1$.
+
 
 В задаче будем использовать диагональный тензор $D:$
 
@@ -36,7 +38,7 @@ d_x & 0 & 0 \\
 
 где $d_x = 0.25, d_y = 0.15, d_z = 0.1$
 
-Также зададим
+Начально-краевые условия:
 ```math
 g(x, y, z) = 0
 f(x, y, z) = (d_x+d_y+d_z)·π²·sin(πx)sin(πy)sin(πz)
