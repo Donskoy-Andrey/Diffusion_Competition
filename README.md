@@ -58,7 +58,7 @@ We also define the time step $Δt$.
 Denote by $V_{ijk}$ the grid node with coordinates $x_i = i Δx, y_j = j Δy, z_k = k Δz.$
 
 We will describe the discrete function $[U]^h$ at time $nΔt$ by its degrees of freedom, which we will place at the grid nodes
-and the degree of freedom at the node V_ijk will be denoted as:
+and the degree of freedom at the node $V_ijk$ will be denoted as:
 ```math
 U_{ijk}^n, 0 ⩽ i ⩽ Nx-1, 0 ⩽ j ⩽ Ny-1, 0 ⩽ k ⩽ Nz-1.
 ```
