@@ -1,6 +1,6 @@
-# Competitive task on supercomputer practice
+# Competitive Task
 
-## Formulation of the diffusion problem
+## Formulation of the Diffusion Problem
 The solution of the non-stationary diffusion equation with unknown U is considered:
 ```math
 U = U(x, y, z, t):
@@ -89,7 +89,7 @@ U_{ijk}^{(n+1)} = g_{ijk}$,
 ```
 if $(i%(Nx-1)) (j%(Ny-1)) (k%(Nz-1)) = 0$, where $x%y$ is the operation of taking the remainder of division $x$ on $y$.
 
-## Start code
+## Start Code
 
 ```bash
 pip install -r requirements.txt
@@ -100,7 +100,9 @@ make
 ./main
 ```
 
-## Analytical solution
+## Analytical Solution
 <p align="center">
   <img src="data/images/analytical.png">
 </p>
+
+## Implemented Solution
