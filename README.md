@@ -106,3 +106,15 @@ make
 </p>
 
 ## Implemented Solution
+<p align="center">
+  <img src="data/images/front.png">
+</p>
+
+## Parallel version
+A parallel version of the solution was implemented using the MPI package. 
+To do this, the discretization area is divided along the $Ox$ axis into the number of processors, 
+counting and data transfer between processes is implemented. 
+At the end, the results are concatenated into the final solution.
+<p align="center">
+  <img src="data/images/mpi.gif">
+</p>
