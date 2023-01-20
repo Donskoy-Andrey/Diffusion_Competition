@@ -10,23 +10,23 @@ U = U(x, y, z, t):
 ∂U/∂t - div (D · grad U) = f(x, y, z, t), (x,y,z)
 ``` 
 
-где точка $(x, y, z)$ принадлежит $Ω = [0; 1]^3$, t на отрезке $[0, T]$
+where dot $(x, y, z)$ belongs $Ω = [0; 1]^3$, $t$ on the segment $[0, T]$
 
-Граничные условия:
+Boundary conditions:
 ```math
 U(x, y, z, t) = g(x, y, z) 
 ```
-на границе области $∂Ω$, а начальные условия: 
+on the boundary of the domain $∂Ω$, and the initial conditions are: 
 
 ```math
 U(x, y, z, 0) = 0 
 ```
-в начальный момент времени $t_0 = 0$
+at the initial time $t_0 = 0$.
 
-Конечный момент времени зададим как $T = 1$.
+Let's set the final moment of time as $T = 1$.
 
 
-В задаче будем использовать диагональный тензор $D:$
+In the problem, we will use the diagonal tensor $D$:
 
 ```math
 D=\begin{pmatrix}
@@ -36,15 +36,15 @@ d_x & 0 & 0 \\
 \end{pmatrix}
 ```
 
-где $d_x = 0.25, d_y = 0.15, d_z = 0.1$
+where $d_x = 0.25, d_y = 0.15, d_z = 0.1$
 
-Начально-краевые условия:
+Initial-boundary conditions:
 ```math
 g(x, y, z) = 0
 f(x, y, z) = (d_x+d_y+d_z)·π²·sin(πx)sin(πy)sin(πz)
 ```
 
-У решаемого уравнения существует аналитическое решение:
+The equation being solved has an analytical solution:
 ```math
 U_analityc = sin(πx)sin(πy)sin(πz)·(1 - exp(-(d_x+d_y+d_z)·π²·t))
 ```
