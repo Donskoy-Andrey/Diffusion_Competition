@@ -52,7 +52,7 @@ U_analityc = sin(πx)·sin(πy)·sin(πz)·(1 - exp(-(d_x+d_y+d_z)·π²·t))
 ## Discretization
 Let us construct in our domain $Ω$ a uniform grid consisting of parallelepipeds. 
 
-We choose the numbers $Nx, Ny, Nz > 1$ - the number of nodes that will fit along the axis $Ox$, $Oy$ and $Oz$, respectively.
+We choose the numbers $Nx, Ny, Nz > 1$ — the number of nodes that will fit along the axis $Ox$, $Oy$ and $Oz$, respectively.
 Then we define the grid step $Δx = \frac{1}{(Nx-1)}, Δy = \frac{1}{(Ny-1)}, Δz = \frac{1}{(Nz-1)}. $
 We also define the time step $Δt$.
 Denote by $V_{ijk}$ the grid node with coordinates $x_i = i Δx, y_j = j Δy, z_k = k Δz.$
@@ -77,7 +77,11 @@ Lz_{ijk} U^n = \frac{ U_{ij(k-1)}^n - 2·U_{ijk}^n + U_{ij(k+1)}^n }{Δz^2}
 ```
 Also let
 ```math
-f_{ijk}^n = f(i·Δx, j·Δy, k·Δz, nΔt)$ и $g_{ijk} = g(i·Δx, j·Δy, k·Δz)
+f_{ijk}^n = f(i·Δx, j·Δy, k·Δz, nΔt)
+``` 
+and
+```math
+g_{ijk} = g(i·Δx, j·Δy, k·Δz)
 ```
 Then we have the following numerical scheme:
 ```math
@@ -85,7 +89,7 @@ U_{ijk}^{(n+1)} = U_{ijk}^n + Δt·(f_{ijk}^n + d_x·Lx_{ijk} U^n + d_y·Ly_{ijk
 ```
 ```math
 1 ⩽ i ⩽ Nx-2, 1 ⩽ j ⩽ Ny-2, 1 ⩽ k ⩽ Nz-2
-U_{ijk}^{(n+1)} = g_{ijk}$,
+U_{ijk}^{(n+1)} = g_{ijk},
 ```
 if $(i%(Nx-1)) (j%(Ny-1)) (k%(Nz-1)) = 0$, where $x%y$ is the operation of taking the remainder of division $x$ on $y$.
 
@@ -107,7 +111,7 @@ make
 
 ## Implemented Solution
 
-**Error rate** - 0.00076.
+**Error rate** — 0.00076.
 
 Computing power (cluster) provided by the **Institute of Numerical Mathematics** 
 of the **Russian Academy of Sciences**, Moscow.
@@ -118,6 +122,7 @@ Time of work with the optimizer:
 | **2 processors** | **32 processors** |
 |------------------|-------------------|
 | 12.78 s          | 1.1 s             |
+
 
 </div>
 
