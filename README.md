@@ -83,11 +83,8 @@ Then we have the following numerical scheme:
 ```math
 U_{ijk}^{(n+1)} = U_{ijk}^n + Δt·(f_{ijk}^n + d_x·Lx_{ijk} U^n + d_y·Ly_{ijk} U^n + d_z·Lz_{ijk} U^n) 
 ```
-if
 ```math
 1 ⩽ i ⩽ Nx-2, 1 ⩽ j ⩽ Ny-2, 1 ⩽ k ⩽ Nz-2
-```
-```math
 U_{ijk}^{(n+1)} = g_{ijk}$,
 ```
 if $(i%(Nx-1)) (j%(Ny-1)) (k%(Nz-1)) = 0$, where $x%y$ is the operation of taking the remainder of division $x$ on $y$.
