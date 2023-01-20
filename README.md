@@ -49,7 +49,7 @@ The equation being solved has an analytical solution:
 U_analityc = sin(πx)·sin(πy)·sin(πz)·(1 - exp(-(d_x+d_y+d_z)·π²·t))
 ```
 
-# Дискретизация
+## Discretization
 Let us construct in our domain $Ω$ a uniform grid consisting of parallelepipeds. 
 
 We choose the numbers $Nx, Ny, Nz > 1$ - the number of nodes that will fit along the axis $Ox$, $Oy$ and $Oz$, respectively.
